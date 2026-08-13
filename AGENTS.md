@@ -128,7 +128,26 @@ characters. `ArtworkEntity.hasFullText` and the `includesFullText` parameter exi
 translation loaded in a list context does not overwrite a full text already cached.
 
 **Do not use `AsyncImage`**: it would bypass `MediaStore`, hence the SwiftData cache — a new
-download on every appearance, and nothing at all offline. Always `RemoteImageView`.
+download on every appearance, and nothing at all offline. Always `RemoteImageView`. Audio obeys
+the same rule: `AudioGuidePlayer` is fed `Data` by `MediaStore`, never a remote `URL`.
+
+**A server colour is never applied to text without checking it stays legible.** The demo museum
+ships `primary_color = #1B1B1F`, invisible on a dark background. `theme.legiblePrimary(on:)`
+falls back to the system label colour when the relative luminance is too close to the current
+scheme. Use it for text; `theme.accent` is safe as is.
+
+**Text imported from HTML carries UIKit attributes.** `NSAttributedString`'s HTML importer sets a
+black foreground and a Times font in the *UIKit* attribute scope, which survives
+`AttributedString.foregroundColor = nil` (SwiftUI scope) — black on black in dark mode.
+`HTMLTextView` clears the UIKit scope and re-maps bold/italic traits onto the museum font.
+
+**`pos_x = 0, pos_y = 0` means "not placed", not "top-left corner".** The fields are optional and
+decoded with `doubleOrZero`, so an artwork without coordinates is indistinguishable from one at
+the corner. `ArtworkEntity.hasMapPosition` treats that pair as unplaced and no pin is drawn.
+
+**Do not position map pins from a `GeometryReader` nested in a `List` row**: it reports a rect
+that is not the image's, and every pin comes out uniformly offset. `FloorPlanView` measures the
+image with `onGeometryChange` and lays the pins out in an `overlay(alignment: .topLeading)`.
 
 **Always handle the three empties**: missing `museum`, empty `translations`, `""` file path. All
 three are reachable in production.
@@ -163,9 +182,15 @@ the xcconfig silently: never put them back there.
 ## Current state
 
 Foundation in place and verified: network layer, SwiftData cache, lazy loading, server-driven
-theme, home and settings. Interface labels are localised through `Localizable.xcstrings`, English
-source with a complete French translation.
+theme. Every screen is in place — home, settings, exhibition detail, artwork detail with its
+audio guide, Map tab with floor plans and pins, Search tab, and the museum's practical-information
+pages. Interface labels are localised through `Localizable.xcstrings`, English source with a
+complete French translation.
 
-Still to do: Map and Search tabs (today explicit placeholders), artwork detail, audio player,
-`SWIFT_VERSION` 5 → 6, externalising `APIConfiguration.baseURL` (a hardcoded constant), and a
-`LICENSE` plus a `README.md` before the repository goes public.
+The Search and Map tabs need the whole artwork index, so they call `loadEveryArtworkIfNeeded()`,
+which loads exhibition by exhibition and skips whatever already matches the current fingerprint.
+This is still lazy: nothing is fetched until one of those two tabs is opened.
+
+Still to do: `SWIFT_VERSION` 5 → 6, externalising `APIConfiguration.baseURL` (a hardcoded
+constant), and a `LICENSE` plus a `README.md` before the repository goes public. The floor plan
+is fit to the screen with no zoom, which will not be enough for a large museum.
