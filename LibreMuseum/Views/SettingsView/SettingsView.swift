@@ -11,17 +11,12 @@ struct SettingsView: View {
     private var languages: [LanguageEntity]
     @Query private var museums: [MuseumEntity]
 
-    private var museumDefaultCode: String {
-        guard let museum = museums.first else { return "" }
-        return languages.first { $0.id == museum.defaultLanguageID }?.code ?? ""
-    }
-
-    private var displayCode: String {
-        LanguageResolver.displayCode(
-            selected: sync.selectedLanguageCode,
-            availableCodes: languages.map(\.code),
-            museumDefault: museumDefaultCode
-        ) ?? ""
+    private var languageContext: LanguageContext {
+        EntityToUI.languageContext(
+            museum: museums.first,
+            languages: languages,
+            selectedCode: sync.selectedLanguageCode
+        )
     }
 
     var body: some View {
@@ -29,7 +24,7 @@ struct SettingsView: View {
             List {
                 LanguagePickerView(
                     languages: languages.map(EntityToUI.language),
-                    selectedCode: displayCode,
+                    selectedCode: languageContext.displayCode,
                     onSelect: { code in Task { await sync.selectLanguage(code) } }
                 )
 

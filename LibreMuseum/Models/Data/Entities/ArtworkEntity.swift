@@ -22,6 +22,8 @@ final class ArtworkEntity {
 
     var isPlaced: Bool { !roomID.isEmpty }
 
+    var hasMapPosition: Bool { isPlaced && (posX != 0 || posY != 0) }
+
     init(
         id: String,
         exhibitionID: String = "",
