@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MuseumHeaderView: View {
     @Environment(MuseumTheme.self) private var theme
+    @Environment(\.colorScheme) private var colorScheme
 
     let museum: MuseumUI
 
@@ -21,7 +22,7 @@ struct MuseumHeaderView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(museum.name)
                         .font(.museumHeadline)
-                        .foregroundStyle(theme.primary)
+                        .foregroundStyle(theme.legiblePrimary(on: colorScheme))
                     if !museum.subtitle.isEmpty {
                         Text(museum.subtitle)
                             .font(.museumCaption)

@@ -10,6 +10,14 @@ final class MuseumTheme {
 
     var accent: Color { Color(museumHex: accentHex) ?? .museumAccentFallback }
 
+    func legiblePrimary(on scheme: ColorScheme) -> Color {
+        guard let luminance = MuseumHex.relativeLuminance(primaryHex) else {
+            return .museumPrimaryFallback
+        }
+        let staysReadable = scheme == .dark ? luminance > 0.2 : luminance < 0.7
+        return staysReadable ? primary : .museumPrimaryFallback
+    }
+
     func apply(primaryHex: String, accentHex: String) {
         self.primaryHex = primaryHex
         self.accentHex = accentHex
