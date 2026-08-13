@@ -88,12 +88,43 @@ final class ContentSyncService {
         await runIgnoringNetworkFailure { try await self.repository.loadMap(version: self.contentVersion) }
     }
 
-    func loadArtworks(exhibitionID: String) async {
+    func loadArtworksIfNeeded(exhibitionID: String) async {
+        guard repository.needsArtworks(exhibitionID: exhibitionID, version: contentVersion) else {
+            return
+        }
         await runIgnoringNetworkFailure {
             try await self.repository.loadArtworks(
                 exhibitionID: exhibitionID,
                 version: self.contentVersion
             )
+        }
+    }
+
+    func reloadArtworks(exhibitionID: String) async {
+        await runIgnoringNetworkFailure {
+            try await self.repository.loadArtworks(
+                exhibitionID: exhibitionID,
+                version: self.contentVersion
+            )
+        }
+    }
+
+    func loadEveryArtworkIfNeeded() async {
+        for id in repository.cachedExhibitionIDs() {
+            await loadArtworksIfNeeded(exhibitionID: id)
+        }
+    }
+
+    func loadArtworkDetailIfNeeded(id: String) async {
+        guard repository.needsArtworkFullText(id: id, version: contentVersion) else { return }
+        do {
+            try await repository.loadArtworkDetail(id: id, version: contentVersion)
+            state = .ready
+        } catch let error as APIError where error.isContentRemovedFromServer {
+            try? await importer.deleteArtwork(id: id)
+            state = .ready
+        } catch {
+            state = .failed(Self.message(for: error))
         }
     }
 

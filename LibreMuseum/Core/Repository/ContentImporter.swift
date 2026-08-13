@@ -185,6 +185,12 @@ actor ContentImporter {
         try modelContext.save()
     }
 
+    func deleteArtwork(id: String) throws {
+        guard let entity = try find(ArtworkEntity.self, id: id) else { return }
+        modelContext.delete(entity)
+        try modelContext.save()
+    }
+
     func updateSyncState(version: String, checkedAt: Date) throws {
         let state = try syncState()
         state.contentVersion = version

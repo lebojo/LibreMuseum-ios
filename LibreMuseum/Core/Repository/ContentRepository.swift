@@ -165,4 +165,27 @@ final class ContentRepository: ContentRepositoryProtocol {
         if entities.isEmpty { return true }
         return entities.contains(where: isStale)
     }
+
+    func needsArtworks(exhibitionID: String, version: String) -> Bool {
+        let descriptor = FetchDescriptor<ArtworkEntity>(
+            predicate: #Predicate { $0.exhibitionID == exhibitionID }
+        )
+        guard let artworks = try? context.fetch(descriptor) else { return true }
+        if artworks.isEmpty { return true }
+        return artworks.contains { $0.fetchedVersion != version }
+    }
+
+    func needsArtworkFullText(id: String, version: String) -> Bool {
+        var descriptor = FetchDescriptor<ArtworkEntity>(predicate: ArtworkEntity.predicate(id: id))
+        descriptor.fetchLimit = 1
+        guard let artwork = try? context.fetch(descriptor).first else { return true }
+        return !artwork.hasFullText || artwork.fetchedVersion != version
+    }
+
+    func cachedExhibitionIDs() -> [String] {
+        let descriptor = FetchDescriptor<ExhibitionEntity>(
+            sortBy: [SortDescriptor(\.sort), SortDescriptor(\.slug)]
+        )
+        return ((try? context.fetch(descriptor)) ?? []).map(\.id)
+    }
 }
