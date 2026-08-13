@@ -14,6 +14,7 @@ struct RemoteImageView: View {
     let path: String
     let thumb: ThumbSize?
     var contentMode: ContentMode = .fill
+    var onIntrinsicSize: ((CGSize) -> Void)?
 
     private var cacheKey: String {
         MediaAssetEntity.cacheKey(path: path, thumb: thumb)
@@ -53,5 +54,6 @@ struct RemoteImageView: View {
             return
         }
         phase = .loaded(image)
+        onIntrinsicSize?(image.size)
     }
 }
