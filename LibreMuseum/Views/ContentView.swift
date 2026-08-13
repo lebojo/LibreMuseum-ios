@@ -12,17 +12,11 @@ struct ContentView: View {
             }
 
             Tab("Map", systemImage: "map") {
-                ComingSoonView(
-                    title: "Map",
-                    detail: "Floor plans and artwork locations will appear here."
-                )
+                MapView()
             }
 
             Tab(role: .search) {
-                ComingSoonView(
-                    title: "Search",
-                    detail: "Search by title, artist and medium will appear here."
-                )
+                SearchView()
             }
         }
         .tint(theme.accent)
