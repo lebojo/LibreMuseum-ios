@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct HTMLTextView: View {
     @State private var attributed: AttributedString?
@@ -11,15 +12,14 @@ struct HTMLTextView: View {
             if let attributed {
                 Text(attributed)
             } else {
-                Text(html.strippingHTMLTags)
+                Text(html.strippingHTMLTags).font(font)
             }
         }
-        .font(font)
-        .task(id: html) { attributed = Self.attributedString(fromHTML: html) }
+        .task(id: html) { attributed = Self.attributedString(fromHTML: html, baseFont: font) }
     }
 
     @MainActor
-    private static func attributedString(fromHTML html: String) -> AttributedString? {
+    private static func attributedString(fromHTML html: String, baseFont: Font) -> AttributedString? {
         guard !html.isEmpty, let data = html.data(using: .utf8) else { return nil }
         guard let ns = try? NSAttributedString(
             data: data,
@@ -32,9 +32,29 @@ struct HTMLTextView: View {
 
         var result = AttributedString(ns)
 
-        result.font = nil
+        let importedFonts = result.runs.map {
+            ($0.range, $0[AttributeScopes.UIKitAttributes.FontAttribute.self])
+        }
+        for (range, importedFont) in importedFonts {
+            result[range].font = baseFont.matching(importedFont)
+        }
+
+        result[AttributeScopes.UIKitAttributes.FontAttribute.self] = nil
+        result[AttributeScopes.UIKitAttributes.ForegroundColorAttribute.self] = nil
+        result[AttributeScopes.UIKitAttributes.BackgroundColorAttribute.self] = nil
         result.foregroundColor = nil
+        result.backgroundColor = nil
         return result
+    }
+}
+
+extension Font {
+    func matching(_ importedFont: UIFont?) -> Font {
+        let traits = importedFont?.fontDescriptor.symbolicTraits ?? []
+        var font = self
+        if traits.contains(.traitBold) { font = font.bold() }
+        if traits.contains(.traitItalic) { font = font.italic() }
+        return font
     }
 }
 
