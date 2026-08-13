@@ -45,6 +45,19 @@ nonisolated enum LanguageResolver {
 
     static func pick<Translation>(
         from translations: [Translation],
+        in context: LanguageContext,
+        languageCode: (Translation) -> String
+    ) -> Translation? {
+        pick(
+            from: translations,
+            code: context.displayCode,
+            museumDefault: context.museumDefaultCode,
+            languageCode: languageCode
+        )
+    }
+
+    static func pick<Translation>(
+        from translations: [Translation],
         code: String,
         museumDefault: String,
         languageCode: (Translation) -> String

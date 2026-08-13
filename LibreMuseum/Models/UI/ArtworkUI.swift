@@ -1,0 +1,29 @@
+import Foundation
+
+nonisolated struct ArtworkUI: Identifiable, Sendable, Hashable {
+    let id: String
+    let code: String
+    let title: String
+    let artist: String
+    let year: String
+    let thumbnailPath: String
+    let hasAudioGuide: Bool
+}
+
+nonisolated struct ArtworkDetailUI: Identifiable, Sendable, Equatable {
+    let id: String
+    let code: String
+    let title: String
+    let artist: String
+    let year: String
+    let technique: String
+    let inventoryNumber: String
+    let roomName: String
+    let imagePaths: [String]
+    let text: String
+    let audioPath: String
+    let audioDuration: Int
+    let hasTranslation: Bool
+
+    var hasAudioGuide: Bool { !audioPath.isEmpty }
+}
