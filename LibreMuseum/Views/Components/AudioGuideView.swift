@@ -53,7 +53,7 @@ struct AudioGuideView: View {
                         player.togglePlayback()
                     } label: {
                         Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                            .font(.system(size: 44))
+                            .font(.museumAudioControl)
                             .foregroundStyle(theme.accent)
                     }
                     .buttonStyle(.plain)
