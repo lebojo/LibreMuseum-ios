@@ -16,6 +16,7 @@ struct MapView: View {
     @Query(sort: [SortDescriptor(\ArtworkEntity.sort), SortDescriptor(\ArtworkEntity.code)])
     private var artworks: [ArtworkEntity]
     @State private var selectedFloorID = ""
+    @State private var selectedPin: MapPinUI?
     @State private var isLoadingMap = false
 
     private var languageContext: LanguageContext {
@@ -90,9 +91,13 @@ struct MapView: View {
 
                     if let selectedFloor, selectedFloor.hasMap {
                         Section {
-                            FloorPlanView(mapPath: selectedFloor.mapPath, pins: pins)
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
+                            FloorPlanView(
+                                mapPath: selectedFloor.mapPath,
+                                pins: pins,
+                                onSelect: { selectedPin = $0 }
+                            )
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
                         }
                     }
 
@@ -103,7 +108,7 @@ struct MapView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Map")
-            .navigationDestination(for: MapPinUI.self) { ArtworkDetailView(artworkID: $0.id) }
+            .navigationDestination(item: $selectedPin) { ArtworkDetailView(artworkID: $0.id) }
             .navigationDestination(for: ArtworkUI.self) { ArtworkDetailView(artworkID: $0.id) }
             .refreshable {
                 await sync.loadMapIfNeeded()
