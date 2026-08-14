@@ -82,7 +82,10 @@ struct HomeView: View {
             }
             .listStyle(.plain)
             .navigationTitle(museum?.name ?? "")
-            .navigationBarTitleDisplayMode(museum == nil ? .large : .inline)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) { Color.clear }
+            }
             .navigationDestination(for: ExhibitionUI.self) {
                 ExhibitionDetailView(exhibitionID: $0.id)
             }

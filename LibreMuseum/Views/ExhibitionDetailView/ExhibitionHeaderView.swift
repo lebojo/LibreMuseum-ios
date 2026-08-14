@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ExhibitionHeaderView: View {
+    @Environment(MuseumTheme.self) private var theme
+    @Environment(\.colorScheme) private var colorScheme
+
     let exhibition: ExhibitionDetailUI
 
     private var schedule: ExhibitionScheduleView.Schedule? {
@@ -17,6 +20,11 @@ struct ExhibitionHeaderView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
+                Text(exhibition.title)
+                    .font(.museumTitle)
+                    .foregroundStyle(theme.legiblePrimary(on: colorScheme))
+                    .accessibilityAddTraits(.isHeader)
+
                 if !exhibition.subtitle.isEmpty {
                     Text(exhibition.subtitle)
                         .font(.museumMeta)

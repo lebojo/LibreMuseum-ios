@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ArtworkDetailView: View {
     @Environment(ContentSyncService.self) private var sync
+    @Environment(MuseumTheme.self) private var theme
+    @Environment(\.colorScheme) private var colorScheme
     @Query private var museums: [MuseumEntity]
     @Query(
         filter: #Predicate<LanguageEntity> { $0.isActive },
@@ -47,12 +49,19 @@ struct ArtworkDetailView: View {
                         ArtworkGalleryView(imagePaths: artwork.imagePaths)
                     }
 
-                    if !artwork.artist.isEmpty {
-                        Text(artwork.artist)
-                            .font(.museumMeta)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(artwork.title)
+                            .font(.museumTitle)
+                            .foregroundStyle(theme.legiblePrimary(on: colorScheme))
+                            .accessibilityAddTraits(.isHeader)
+
+                        if !artwork.artist.isEmpty {
+                            Text(artwork.artist)
+                                .font(.museumMeta)
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                    .padding(.horizontal)
 
                     if artwork.hasAudioGuide {
                         AudioGuideView(path: artwork.audioPath, announcedDuration: artwork.audioDuration)
@@ -75,6 +84,10 @@ struct ArtworkDetailView: View {
             }
         }
         .navigationTitle(artwork?.title ?? "")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) { Color.clear }
+        }
         .task {
             isLoadingDetail = true
             await sync.loadArtworkDetailIfNeeded(id: artworkID)
