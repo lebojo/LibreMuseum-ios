@@ -75,10 +75,6 @@ struct ExhibitionDetailView: View {
         }
         .listStyle(.plain)
         .navigationTitle(detail?.title ?? "")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) { Color.clear }
-        }
         .navigationDestination(for: ArtworkUI.self) { ArtworkDetailView(artworkID: $0.id) }
         .refreshable { await sync.reloadArtworks(exhibitionID: exhibitionID) }
         .task {

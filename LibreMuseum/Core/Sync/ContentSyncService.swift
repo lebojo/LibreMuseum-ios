@@ -23,14 +23,14 @@ final class ContentSyncService {
     private let repository: ContentRepository
     private let context: ModelContext
 
-    init(modelContainer: ModelContainer) {
+    init(modelContainer: ModelContainer, mediaStore: MediaStore) {
         let client = PocketBaseClient()
         let importer = ContentImporter(modelContainer: modelContainer)
         let context = ModelContext(modelContainer)
 
         self.client = client
         self.importer = importer
-        self.mediaStore = MediaStore(modelContainer: modelContainer)
+        self.mediaStore = mediaStore
         self.context = context
         self.repository = ContentRepository(
             client: client,

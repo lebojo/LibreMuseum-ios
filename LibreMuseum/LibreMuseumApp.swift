@@ -11,9 +11,11 @@ struct LibreMuseumApp: App {
 
     init() {
         let container = Self.makeModelContainer()
+        let store = MediaStore(modelContainer: container)
+
         modelContainer = container
-        mediaStore = MediaStore(modelContainer: container)
-        _sync = State(initialValue: ContentSyncService(modelContainer: container))
+        mediaStore = store
+        _sync = State(initialValue: ContentSyncService(modelContainer: container, mediaStore: store))
     }
 
     var body: some Scene {
