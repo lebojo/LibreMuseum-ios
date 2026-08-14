@@ -6,6 +6,7 @@ struct FloorPlanView: View {
 
     let mapPath: String
     let pins: [MapPinUI]
+    let onSelect: (MapPinUI) -> Void
 
     private var aspectRatio: Double {
         guard let planSize, planSize.height > 0 else { return 4.0 / 3.0 }
@@ -21,7 +22,9 @@ struct FloorPlanView: View {
         .overlay(alignment: .topLeading) {
             if renderedSize.width > 0 {
                 ForEach(pins) { pin in
-                    NavigationLink(value: pin) {
+                    Button {
+                        onSelect(pin)
+                    } label: {
                         MapPinView(label: pin.label)
                     }
                     .buttonStyle(.plain)
