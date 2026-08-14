@@ -23,6 +23,7 @@ struct MuseumHeaderView: View {
                     Text(museum.name)
                         .font(.museumHeadline)
                         .foregroundStyle(theme.legiblePrimary(on: colorScheme))
+                        .accessibilityAddTraits(.isHeader)
                     if !museum.subtitle.isEmpty {
                         Text(museum.subtitle)
                             .font(.museumCaption)
