@@ -1,0 +1,28 @@
+# Xcode — interface state and user data
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Signing — everyone has their own
+Configurations/Signing.local.xcconfig
+
+# Agent worktrees
+.claude/
+
+# Build
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+
+# macOS
+.DS_Store
