@@ -38,6 +38,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		174A77D53024C02100F0AD68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				174A77D43024C02100F0AD68 /* LibreMuseum.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		17C0FFEE3024C02100F0AD03 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -45,14 +53,6 @@
 				17C0FFEE3024C02100F0AD02 /* Signing.local.example.xcconfig */,
 			);
 			path = Configurations;
-			sourceTree = "<group>";
-		};
-		174A77D53024C02100F0AD68 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				174A77D43024C02100F0AD68 /* LibreMuseum.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

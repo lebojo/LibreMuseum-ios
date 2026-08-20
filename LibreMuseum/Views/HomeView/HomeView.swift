@@ -11,8 +11,7 @@ struct HomeView: View {
         sort: [SortDescriptor(\LanguageEntity.sort), SortDescriptor(\LanguageEntity.code)]
     )
     private var languages: [LanguageEntity]
-    @Query(sort: [SortDescriptor(\PageEntity.sort), SortDescriptor(\PageEntity.slug)])
-    private var pages: [PageEntity]
+    @State private var isShowingInfo = false
     @State private var isShowingSettings = false
 
     private var museum: MuseumEntity? { museums.first }
@@ -27,16 +26,6 @@ struct HomeView: View {
 
     private var exhibitionItems: [ExhibitionUI] {
         exhibitions.map { EntityToUI.exhibition($0, in: languageContext) }
-    }
-
-    private var pageItems: [PageUI] {
-        pages.map { EntityToUI.page($0, in: languageContext) }
-    }
-
-    private var contact: MuseumContactUI? {
-        guard let museum else { return nil }
-        let contact = EntityToUI.museumContact(museum)
-        return contact.isEmpty ? nil : contact
     }
 
     private var emptyState: ContentStateView.State {
@@ -71,14 +60,6 @@ struct HomeView: View {
                         }
                     }
                 }
-
-                if !pageItems.isEmpty {
-                    PageListSectionView(pages: pageItems)
-                }
-
-                if let contact {
-                    MuseumContactSectionView(contact: contact)
-                }
             }
             .listStyle(.plain)
             .navigationTitle(museum?.name ?? "")
@@ -86,13 +67,16 @@ struct HomeView: View {
             .navigationDestination(for: ExhibitionUI.self) {
                 ExhibitionDetailView(exhibitionID: $0.id)
             }
-            .navigationDestination(for: PageUI.self) { page in
-                PageDetailView(page: pageDetail(for: page.id))
-            }
             .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Information", systemImage: "info.circle") { isShowingInfo = true }
+                }
                 ToolbarItem {
                     Button("Settings", systemImage: "gear") { isShowingSettings = true }
                 }
+            }
+            .sheet(isPresented: $isShowingInfo) {
+                MuseumInfoView()
             }
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView()
@@ -100,12 +84,5 @@ struct HomeView: View {
             .refreshable { await sync.start() }
             .task { await sync.start() }
         }
-    }
-
-    private func pageDetail(for id: String) -> PageDetailUI {
-        guard let entity = pages.first(where: { $0.id == id }) else {
-            return PageDetailUI(id: id, title: "", body: "")
-        }
-        return EntityToUI.pageDetail(entity, in: languageContext)
     }
 }
