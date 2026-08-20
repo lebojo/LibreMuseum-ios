@@ -8,6 +8,8 @@
 
 /* Begin PBXFileReference section */
 		174A77D43024C02100F0AD68 /* LibreMuseum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LibreMuseum.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		17C0FFEE3024C02100F0AD02 /* Signing.local.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.local.example.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -30,9 +32,19 @@
 		174A77CB3024C02100F0AD68 = {
 			isa = PBXGroup;
 			children = (
+				17C0FFEE3024C02100F0AD03 /* Configurations */,
 				174A77D63024C02100F0AD68 /* LibreMuseum */,
 				174A77D53024C02100F0AD68 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		17C0FFEE3024C02100F0AD03 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */,
+				17C0FFEE3024C02100F0AD02 /* Signing.local.example.xcconfig */,
+			);
+			path = Configurations;
 			sourceTree = "<group>";
 		};
 		174A77D53024C02100F0AD68 /* Products */ = {
@@ -150,7 +162,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -214,7 +225,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -238,12 +248,11 @@
 		};
 		174A77E23024C02300F0AD68 /* Debug configuration for PBXNativeTarget "LibreMuseum" */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -257,7 +266,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.bojeux.LibreMuseum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -271,12 +279,11 @@
 		};
 		174A77E33024C02300F0AD68 /* Release configuration for PBXNativeTarget "LibreMuseum" */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -290,7 +297,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.bojeux.LibreMuseum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

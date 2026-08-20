@@ -1,0 +1,13 @@
+// Signing and bundle identifier. Neutral values, good enough for the simulator.
+//
+// To build on a device, copy Signing.local.example.xcconfig to Signing.local.xcconfig and
+// fill in your team. That file is not versioned: your configuration stays with you and
+// never shows up in a diff.
+
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM =
+PRODUCT_BUNDLE_IDENTIFIER = ch.bojeux.LibreMuseum
+
+// The `?` makes the include optional: with no local file, the project still builds.
+// Placed last, it has the final say over the values above.
+#include? "Signing.local.xcconfig"
