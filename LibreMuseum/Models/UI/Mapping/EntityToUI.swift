@@ -44,10 +44,12 @@ enum EntityToUI {
             in: context,
             languageCode: \.languageCode
         )
+        let displayTitle = translation?.title.nilIfEmpty ?? entity.slug
 
         return ExhibitionUI(
             id: entity.id,
-            title: translation?.title.nilIfEmpty ?? entity.slug,
+            title: displayTitle,
+            searchableTitles: [displayTitle] + entity.translations.map(\.title).sorted(),
             subtitle: translation?.subtitle ?? "",
             coverPath: entity.coverPath,
             isPermanent: entity.isPermanent,
@@ -89,11 +91,13 @@ enum EntityToUI {
             in: context,
             languageCode: \.languageCode
         )
+        let displayTitle = title(of: entity, translated: translation?.title)
 
         return ArtworkUI(
             id: entity.id,
             code: entity.code,
-            title: title(of: entity, translated: translation?.title),
+            title: displayTitle,
+            searchableTitles: [displayTitle] + entity.translations.map(\.title).sorted(),
             artist: entity.artist,
             year: entity.year,
             thumbnailPath: entity.imagePaths.first ?? "",
