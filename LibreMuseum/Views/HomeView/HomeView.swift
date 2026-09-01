@@ -28,6 +28,14 @@ struct HomeView: View {
         exhibitions.map { EntityToUI.exhibition($0, in: languageContext) }
     }
 
+    private var currentExhibitions: [ExhibitionUI] {
+        exhibitionItems.filter { !$0.hasEnded }.sorted(by: ExhibitionUI.newestStartFirst)
+    }
+
+    private var pastExhibitions: [ExhibitionUI] {
+        exhibitionItems.filter(\.hasEnded).sorted(by: ExhibitionUI.newestEndFirst)
+    }
+
     private var emptyState: ContentStateView.State {
         if case .failed(let message) = sync.state { return .unreachable(message) }
         if sync.state == .checking || museum == nil { return .loading("Loading the museum") }
@@ -52,10 +60,22 @@ struct HomeView: View {
                         }
                     }
                 } else {
-                    Section("Exhibitions") {
-                        ForEach(exhibitionItems) { item in
-                            NavigationLink(value: item) {
-                                ExhibitionRowView(exhibition: item)
+                    if !currentExhibitions.isEmpty {
+                        Section("Exhibitions") {
+                            ForEach(currentExhibitions) { item in
+                                NavigationLink(value: item) {
+                                    ExhibitionRowView(exhibition: item)
+                                }
+                            }
+                        }
+                    }
+
+                    if !pastExhibitions.isEmpty {
+                        Section("Past exhibitions") {
+                            ForEach(pastExhibitions) { item in
+                                NavigationLink(value: item) {
+                                    ExhibitionRowView(exhibition: item)
+                                }
                             }
                         }
                     }

@@ -6,8 +6,23 @@ nonisolated struct ExhibitionUI: Identifiable, Sendable, Hashable {
     let subtitle: String
     let coverPath: String
     let isPermanent: Bool
+    let startDate: Date?
+    let endDate: Date?
     let dateRange: String?
     let hasTranslation: Bool
+
+    var hasEnded: Bool {
+        guard !isPermanent, let endDate else { return false }
+        return endDate < .now
+    }
+
+    static func newestStartFirst(_ lhs: ExhibitionUI, _ rhs: ExhibitionUI) -> Bool {
+        (lhs.startDate ?? .distantFuture) > (rhs.startDate ?? .distantFuture)
+    }
+
+    static func newestEndFirst(_ lhs: ExhibitionUI, _ rhs: ExhibitionUI) -> Bool {
+        (lhs.endDate ?? .distantPast) > (rhs.endDate ?? .distantPast)
+    }
 }
 
 nonisolated struct ExhibitionDetailUI: Identifiable, Sendable, Equatable {

@@ -51,6 +51,8 @@ enum EntityToUI {
             subtitle: translation?.subtitle ?? "",
             coverPath: entity.coverPath,
             isPermanent: entity.isPermanent,
+            startDate: entity.startDate,
+            endDate: entity.endDate,
             dateRange: dateRange(start: entity.startDate, end: entity.endDate,
                                  isPermanent: entity.isPermanent),
             hasTranslation: translation != nil
