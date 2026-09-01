@@ -21,6 +21,7 @@ struct SearchView: View {
     private var artworks: [ArtworkEntity]
     @State private var query = ""
     @State private var isLoadingIndex = false
+    @FocusState private var isSearchFocused: Bool
 
     private var languageContext: LanguageContext {
         EntityToUI.languageContext(
@@ -116,10 +117,12 @@ struct SearchView: View {
                 ExhibitionDetailView(exhibitionID: $0.id)
             }
             .searchable(text: $query, prompt: "Title, artist or label number")
+            .searchFocused($isSearchFocused)
             .task {
                 isLoadingIndex = true
                 await sync.loadEveryArtworkIfNeeded()
                 isLoadingIndex = false
+                isSearchFocused = true
             }
         }
     }
