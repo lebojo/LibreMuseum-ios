@@ -435,6 +435,16 @@
         }
       }
     },
+    "Past exhibitions" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expositions passées"
+          }
+        }
+      }
+    },
     "Pause" : {
       "localizations" : {
         "fr" : {
