@@ -3,7 +3,7 @@ import Foundation
 nonisolated enum ArtworkSearch {
     struct Fields: Sendable {
         let code: String
-        let title: String
+        let titles: [String]
         let artist: String
     }
 
@@ -24,9 +24,9 @@ nonisolated enum ArtworkSearch {
 
         if !fields.code.isEmpty, comparable(fields.code) == needle { return .exactCode }
 
-        let title = comparable(fields.title)
-        if title.hasPrefix(needle) { return .titlePrefix }
-        if title.contains(needle) { return .titleContains }
+        let titles = fields.titles.map(comparable)
+        if titles.contains(where: { $0.hasPrefix(needle) }) { return .titlePrefix }
+        if titles.contains(where: { $0.contains(needle) }) { return .titleContains }
         if comparable(fields.artist).contains(needle) { return .artistContains }
         return nil
     }
@@ -35,6 +35,10 @@ nonisolated enum ArtworkSearch {
         let needle = comparable(query)
         guard !needle.isEmpty else { return false }
         return comparable(haystack).contains(needle)
+    }
+
+    static func matches(_ haystacks: [String], query: String) -> Bool {
+        haystacks.contains { matches($0, query: query) }
     }
 
     private static func comparable(_ value: String) -> String {

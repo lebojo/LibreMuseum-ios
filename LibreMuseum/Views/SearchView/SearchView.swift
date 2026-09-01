@@ -39,7 +39,7 @@ struct SearchView: View {
             let item = EntityToUI.artwork(entity, in: context)
             let fields = ArtworkSearch.Fields(
                 code: item.code,
-                title: item.title,
+                titles: [item.title] + entity.translations.map(\.title),
                 artist: item.artist
             )
             guard let relevance = ArtworkSearch.relevance(of: fields, for: query) else {
@@ -56,9 +56,11 @@ struct SearchView: View {
     private var exhibitionResults: [ExhibitionUI] {
         guard !query.isEmpty else { return [] }
         let context = languageContext
-        return exhibitions
-            .map { EntityToUI.exhibition($0, in: context) }
-            .filter { ArtworkSearch.matches($0.title, query: query) }
+        return exhibitions.compactMap { entity in
+            let item = EntityToUI.exhibition(entity, in: context)
+            let titles = [item.title] + entity.translations.map(\.title)
+            return ArtworkSearch.matches(titles, query: query) ? item : nil
+        }
     }
 
     private var hasResults: Bool {
