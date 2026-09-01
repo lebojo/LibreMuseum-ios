@@ -6,6 +6,10 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		17C0FFEE3024C02100F0AD12 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 17C0FFEE3024C02100F0AD11 /* CodeScanner */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		174A77D43024C02100F0AD68 /* LibreMuseum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LibreMuseum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
@@ -24,6 +28,7 @@
 		174A77D13024C02100F0AD68 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				17C0FFEE3024C02100F0AD12 /* CodeScanner in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -72,6 +77,9 @@
 				174A77D63024C02100F0AD68 /* LibreMuseum */,
 			);
 			name = LibreMuseum;
+			packageProductDependencies = (
+				17C0FFEE3024C02100F0AD11 /* CodeScanner */,
+			);
 			productName = LibreMuseum;
 			productReference = 174A77D43024C02100F0AD68 /* LibreMuseum.app */;
 			productType = "com.apple.product-type.application";
@@ -101,6 +109,9 @@
 			);
 			mainGroup = 174A77CB3024C02100F0AD68;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				17C0FFEE3024C02100F0AD10 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 174A77D53024C02100F0AD68 /* Products */;
 			projectDirPath = "";
@@ -258,6 +269,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scanning the QR code on your ticket unlocks the exhibition you bought.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -289,6 +301,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scanning the QR code on your ticket unlocks the exhibition you bought.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -312,6 +325,25 @@
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		17C0FFEE3024C02100F0AD10 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		17C0FFEE3024C02100F0AD11 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17C0FFEE3024C02100F0AD10 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCConfigurationList section */
 		174A77CF3024C02100F0AD68 /* Build configuration list for PBXProject "LibreMuseum" */ = {
