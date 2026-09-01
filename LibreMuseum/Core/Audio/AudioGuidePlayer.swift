@@ -53,7 +53,7 @@ final class AudioGuidePlayer {
             isPlaying = false
             progressTicker?.cancel()
         } else {
-            Self.activateSpokenAudioSession()
+            SpokenAudioSession.activate()
             player.play()
             isPlaying = true
             startTickingProgress()
@@ -102,11 +102,5 @@ final class AudioGuidePlayer {
         }
         currentTime = player.currentTime
         return true
-    }
-
-    private static func activateSpokenAudioSession() {
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .spokenAudio)
-        try? session.setActive(true)
     }
 }
