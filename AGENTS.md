@@ -144,6 +144,22 @@ sibling holding the same language code under a different id. Pruning already cov
 loads, but this also protects a partial one, where it does not run — two rows can never race for
 the same slot.
 
+**A locked exhibition is decided once, in `EntityToUI.ticketAccess`.** Every screen builds a
+`TicketAccess` from its exhibitions and the `TicketStore`, then carries it into the `*UI` models;
+no subview ever reads the store. That is what keeps the padlock identical in the exhibition list,
+in Search and on the Map, and it is why `ArtworkLinkView` — not each call site — decides between a
+`NavigationLink` and the unlock sheet.
+
+**Scanned tickets live in `UserDefaults`, not in SwiftData.** `purgeAll` empties the content cache
+from the settings screen; a visitor who has paid must not lose their unlock by freeing some space.
+`TicketStore` also wakes up once at the earliest deadline, because nothing else would notice a
+ticket expiring while its screen is open.
+
+**The padlock discourages, it does not protect.** The artworks stay readable through the public
+REST API, as they must be for an app with no visitor account. `unlock_code` is compared on the
+device, so it travels in the `exhibition` response: do not present the lock as a protection, and
+do not put anything behind it that would actually harm the museum if read.
+
 **Do not use `AsyncImage`**: it would bypass `MediaStore`, hence the SwiftData cache — a new
 download on every appearance, and nothing at all offline. Always `RemoteImageView`. Audio obeys
 the same rule: `AudioGuidePlayer` is fed `Data` by `MediaStore`, never a remote `URL`.
@@ -232,6 +248,8 @@ Search tab, and the museum's practical-information pages. Interface labels are l
 The Search and Map tabs need the whole artwork index, so they call `loadEveryArtworkIfNeeded()`,
 which loads exhibition by exhibition and skips whatever already matches the current fingerprint.
 This is still lazy: nothing is fetched until one of those two tabs is opened.
+
+Paying exhibitions are in place: `requires_ticket` locks the artwork list behind a QR code scanned with `CodeScanner`, `museum.ticket_validity_hours` says for how long, and the description of the exhibition stays readable without a ticket.
 
 Still to do: `SWIFT_VERSION` 5 → 6, externalising `APIConfiguration.baseURL` (a hardcoded
 constant), and a `LICENSE` plus a `README.md` before the repository goes public. The floor plan
