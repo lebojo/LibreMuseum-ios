@@ -12,6 +12,7 @@ actor ContentImporter {
         entity.primaryColorHex = dto.primaryColor
         entity.accentColorHex = dto.accentColor
         entity.defaultLanguageID = dto.defaultLanguageID
+        entity.ticketValidityHours = dto.ticketValidityHours
         entity.website = dto.website
         entity.email = dto.email
         entity.phone = dto.phone
@@ -115,6 +116,8 @@ actor ContentImporter {
             entity.startDate = dto.startDate
             entity.endDate = dto.endDate
             entity.roomIDs = dto.roomIDs
+            entity.requiresTicket = dto.requiresTicket
+            entity.unlockCode = dto.unlockCode
             entity.sort = dto.sort
             entity.fetchedVersion = version
         }

@@ -10,6 +10,8 @@ nonisolated struct ExhibitionDTO: Decodable, Sendable {
     let startDate: Date?
     let endDate: Date?
     let roomIDs: [String]
+    let requiresTicket: Bool
+    let unlockCode: String
     let sort: Int
 
     var coverPath: String? {
@@ -23,6 +25,8 @@ nonisolated struct ExhibitionDTO: Decodable, Sendable {
         case startDate = "start_date"
         case endDate = "end_date"
         case roomIDs = "rooms"
+        case requiresTicket = "requires_ticket"
+        case unlockCode = "unlock_code"
     }
 
     init(from decoder: Decoder) throws {
@@ -36,6 +40,8 @@ nonisolated struct ExhibitionDTO: Decodable, Sendable {
         startDate = container.dateOrNil(.startDate)
         endDate = container.dateOrNil(.endDate)
         roomIDs = container.stringsOrEmpty(.roomIDs)
+        requiresTicket = container.boolOrFalse(.requiresTicket)
+        unlockCode = container.stringOrEmpty(.unlockCode)
         sort = container.intOrZero(.sort)
     }
 }
