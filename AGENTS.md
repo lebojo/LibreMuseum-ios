@@ -124,8 +124,25 @@ path contains the record id and the file name, which a server-side replacement r
 Unchanged path = same bytes.
 
 **Lists exclude heavy fields through `fields`.** `artwork_translation.text` reaches 500,000
-characters. `ArtworkEntity.hasFullText` and the `includesFullText` parameter exist so that a
-translation loaded in a list context does not overwrite a full text already cached.
+characters. The `includesFullText` parameter exists so that a translation loaded in a list
+context does not overwrite a full text already cached, and `ArtworkEntity.fullTextVersion` —
+stamped only by `loadArtworkDetail` — is what `needsArtworkFullText` compares. It is
+deliberately distinct from the shared `fetchedVersion`: stamping that one in a list pass would
+certify a text the pass never downloaded, and the description would stay empty on screen until
+the visitor purged the cache.
+
+**A record deleted server-side must be pruned locally, translations included.** The museum
+deleting a translation and re-entering it produces a new id, and the stale row keeps its language
+code — `LanguageResolver.pick` returns the *first* match over a relationship whose order is not
+guaranteed, so the orphan wins and the screen stays empty. The three importers prune their
+translations, which turns `isCompleteSet` into a real contract rather than a hint: pruning
+against a truncated page would delete live content. That is why every list goes through
+`everyPage`; a lone `perPage: 500` request used to truncate a large museum in silence.
+
+**The server's `UNIQUE (parent, language)` is mirrored on import.** `dropSuperseded` deletes a
+sibling holding the same language code under a different id. Pruning already covers the complete
+loads, but this also protects a partial one, where it does not run — two rows can never race for
+the same slot.
 
 **Do not use `AsyncImage`**: it would bypass `MediaStore`, hence the SwiftData cache — a new
 download on every appearance, and nothing at all offline. Always `RemoteImageView`. Audio obeys

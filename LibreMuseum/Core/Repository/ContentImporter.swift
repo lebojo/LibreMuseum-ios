@@ -38,7 +38,8 @@ actor ContentImporter {
     func importPages(
         _ dtos: [PageDTO],
         translations: [PageTranslationDTO],
-        version: String
+        version: String,
+        isCompleteSet: Bool
     ) throws {
         let codes = try languageCodesByID()
 
@@ -49,7 +50,9 @@ actor ContentImporter {
             entity.sort = dto.sort
             entity.fetchedVersion = version
         }
-        try prune(PageEntity.self, keeping: dtos.map(\.id))
+        if isCompleteSet {
+            try prune(PageEntity.self, keeping: dtos.map(\.id))
+        }
 
         for dto in translations {
             guard let code = codes[dto.languageID] else { continue }
@@ -61,6 +64,11 @@ actor ContentImporter {
             entity.body = dto.body
             entity.fetchedVersion = version
             entity.page = try find(PageEntity.self, id: dto.pageID)
+            dropSuperseded(entity, among: entity.page?.translations ?? [])
+        }
+
+        if isCompleteSet {
+            try pruneTranslations(of: dtos, keeping: translations.map(\.id))
         }
         try modelContext.save()
     }
@@ -125,6 +133,11 @@ actor ContentImporter {
             entity.audioPath = dto.audioPath ?? ""
             entity.fetchedVersion = version
             entity.exhibition = try find(ExhibitionEntity.self, id: dto.exhibitionID)
+            dropSuperseded(entity, among: entity.exhibition?.translations ?? [])
+        }
+
+        if isCompleteSet {
+            try pruneTranslations(of: dtos, keeping: translations.map(\.id))
         }
         try modelContext.save()
     }
@@ -133,7 +146,8 @@ actor ContentImporter {
         _ dtos: [ArtworkDTO],
         translations: [ArtworkTranslationDTO],
         version: String,
-        includesFullText: Bool
+        includesFullText: Bool,
+        isCompleteSet: Bool
     ) throws {
         let codes = try languageCodesByID()
 
@@ -152,7 +166,7 @@ actor ContentImporter {
             entity.sort = dto.sort
             entity.fetchedVersion = version
             if includesFullText {
-                entity.hasFullText = true
+                entity.fullTextVersion = version
             }
         }
 
@@ -170,8 +184,53 @@ actor ContentImporter {
             entity.audioDuration = dto.audioDuration
             entity.fetchedVersion = version
             entity.artwork = try find(ArtworkEntity.self, id: dto.artworkID)
+            dropSuperseded(entity, among: entity.artwork?.translations ?? [])
+        }
+
+        if isCompleteSet {
+            try pruneTranslations(of: dtos, keeping: translations.map(\.id))
         }
         try modelContext.save()
+    }
+
+    private func pruneTranslations(of artworks: [ArtworkDTO], keeping ids: [String]) throws {
+        let kept = Set(ids)
+        for dto in artworks {
+            guard let artwork = try find(ArtworkEntity.self, id: dto.id) else { continue }
+            for translation in artwork.translations where !kept.contains(translation.id) {
+                modelContext.delete(translation)
+            }
+        }
+    }
+
+    private func pruneTranslations(of exhibitions: [ExhibitionDTO], keeping ids: [String]) throws {
+        let kept = Set(ids)
+        for dto in exhibitions {
+            guard let exhibition = try find(ExhibitionEntity.self, id: dto.id) else { continue }
+            for translation in exhibition.translations where !kept.contains(translation.id) {
+                modelContext.delete(translation)
+            }
+        }
+    }
+
+    private func pruneTranslations(of pages: [PageDTO], keeping ids: [String]) throws {
+        let kept = Set(ids)
+        for dto in pages {
+            guard let page = try find(PageEntity.self, id: dto.id) else { continue }
+            for translation in page.translations where !kept.contains(translation.id) {
+                modelContext.delete(translation)
+            }
+        }
+    }
+
+    private func dropSuperseded<Translation: PersistentModel & LocalizedTranslation>(
+        _ entity: Translation,
+        among siblings: [Translation]
+    ) {
+        for sibling in siblings
+        where sibling.serverID != entity.serverID && sibling.languageCode == entity.languageCode {
+            modelContext.delete(sibling)
+        }
     }
 
     func pruneArtworks(exhibitionID: String, keeping ids: [String]) throws {
