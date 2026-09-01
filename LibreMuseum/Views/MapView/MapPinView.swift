@@ -12,13 +12,19 @@ struct MapPinView: View {
         Color(museumHex: colorHex) ?? theme.accent
     }
 
+    private var labelColor: Color {
+        Color.museumLegibleForeground(onHex: colorHex)
+            ?? Color.museumLegibleForeground(onHex: theme.accentHex)
+            ?? .white
+    }
+
     var body: some View {
         Text(label)
             .font(.museumCaption.bold().monospacedDigit())
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             .padding(2)
-            .foregroundStyle(.primary)
+            .foregroundStyle(labelColor)
             .frame(width: Self.diameter, height: Self.diameter)
             .background(fillColor, in: Circle())
             .overlay(Circle().stroke(.white, lineWidth: 2))
