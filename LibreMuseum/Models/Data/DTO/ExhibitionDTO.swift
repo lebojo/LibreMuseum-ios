@@ -5,6 +5,7 @@ nonisolated struct ExhibitionDTO: Decodable, Sendable {
     let collectionName: String
     let slug: String
     let cover: String
+    let colorHex: String
     let isPermanent: Bool
     let startDate: Date?
     let endDate: Date?
@@ -17,6 +18,7 @@ nonisolated struct ExhibitionDTO: Decodable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case id, collectionName, slug, cover, sort
+        case colorHex = "color"
         case isPermanent = "is_permanent"
         case startDate = "start_date"
         case endDate = "end_date"
@@ -29,6 +31,7 @@ nonisolated struct ExhibitionDTO: Decodable, Sendable {
         collectionName = container.stringOrEmpty(.collectionName)
         slug = container.stringOrEmpty(.slug)
         cover = container.stringOrEmpty(.cover)
+        colorHex = container.stringOrEmpty(.colorHex)
         isPermanent = container.boolOrFalse(.isPermanent)
         startDate = container.dateOrNil(.startDate)
         endDate = container.dateOrNil(.endDate)

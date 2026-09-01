@@ -134,10 +134,19 @@ enum EntityToUI {
         )
     }
 
-    static func mapPin(_ entity: ArtworkEntity, in context: LanguageContext) -> MapPinUI? {
+    static func mapPin(
+        _ entity: ArtworkEntity,
+        exhibition: ExhibitionEntity?,
+        in context: LanguageContext
+    ) -> MapPinUI? {
         guard entity.hasMapPosition else { return nil }
         let translation = LanguageResolver.pick(
             from: entity.translations,
+            in: context,
+            languageCode: \.languageCode
+        )
+        let exhibitionTranslation = LanguageResolver.pick(
+            from: exhibition?.translations ?? [],
             in: context,
             languageCode: \.languageCode
         )
@@ -146,6 +155,8 @@ enum EntityToUI {
             id: entity.id,
             label: entity.code,
             title: title(of: entity, translated: translation?.title),
+            exhibitionTitle: exhibitionTranslation?.title.nilIfEmpty ?? exhibition?.slug ?? "",
+            colorHex: exhibition?.colorHex ?? "",
             relativeX: min(max(entity.posX, 0), 1),
             relativeY: min(max(entity.posY, 0), 1)
         )
