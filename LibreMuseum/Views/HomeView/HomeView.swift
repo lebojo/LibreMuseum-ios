@@ -3,6 +3,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(ContentSyncService.self) private var sync
+    @Environment(TicketStore.self) private var tickets
     @Query private var museums: [MuseumEntity]
     @Query(sort: [SortDescriptor(\ExhibitionEntity.sort), SortDescriptor(\ExhibitionEntity.slug)])
     private var exhibitions: [ExhibitionEntity]
@@ -24,8 +25,14 @@ struct HomeView: View {
         )
     }
 
+    private var ticketAccess: TicketAccess {
+        EntityToUI.ticketAccess(exhibitions: exhibitions, in: languageContext, tickets: tickets)
+    }
+
     private var exhibitionItems: [ExhibitionUI] {
-        exhibitions.map { EntityToUI.exhibition($0, in: languageContext) }
+        let context = languageContext
+        let access = ticketAccess
+        return exhibitions.map { EntityToUI.exhibition($0, in: context, access: access) }
     }
 
     private var currentExhibitions: [ExhibitionUI] {

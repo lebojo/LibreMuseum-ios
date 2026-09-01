@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RoomSectionView: View {
     let section: RoomArtworksUI
+    let onLocked: (ArtworkUI) -> Void
 
     var body: some View {
         Section {
@@ -11,9 +12,7 @@ struct RoomSectionView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(section.artworks) { artwork in
-                    NavigationLink(value: artwork) {
-                        ArtworkRowView(artwork: artwork)
-                    }
+                    ArtworkLinkView(artwork: artwork) { onLocked(artwork) }
                 }
             }
         } header: {

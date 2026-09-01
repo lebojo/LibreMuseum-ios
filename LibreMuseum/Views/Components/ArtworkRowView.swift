@@ -12,6 +12,14 @@ struct ArtworkRowView: View {
     }
 
     var body: some View {
+        if artwork.isLocked {
+            LockedArtworkRowView(artwork: artwork)
+        } else {
+            unlockedRow
+        }
+    }
+
+    private var unlockedRow: some View {
         HStack(spacing: 12) {
             RemoteImageView(path: artwork.thumbnailPath, thumb: .square200)
                 .frame(width: 56, height: 56)

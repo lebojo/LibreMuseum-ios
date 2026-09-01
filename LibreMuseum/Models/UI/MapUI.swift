@@ -24,10 +24,12 @@ nonisolated struct RoomArtworksUI: Identifiable, Sendable, Hashable {
 
 nonisolated struct MapPinUI: Identifiable, Sendable, Hashable {
     let id: String
+    let exhibitionID: String
     let label: String
     let title: String
     let exhibitionTitle: String
     let colorHex: String
     let relativeX: Double
     let relativeY: Double
+    let isLocked: Bool
 }

@@ -65,6 +65,26 @@
         }
       }
     },
+    "Buy your ticket at the museum and scan the QR code here to unlock the artworks." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achetez votre billet au musée et scannez le QR code ici pour débloquer les œuvres."
+          }
+        }
+      }
+    },
+    "Buy your ticket at the museum and scan the QR code here to unlock." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achetez votre billet au musée et scannez le QR code ici pour débloquer."
+          }
+        }
+      }
+    },
     "By default the app follows your phone's language when the museum offers it." : {
       "localizations" : {
         "fr" : {
@@ -81,6 +101,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuler"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer"
+          }
+        }
+      }
+    },
+    "Code" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code"
           }
         }
       }
@@ -161,6 +201,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tout télécharger"
+          }
+        }
+      }
+    },
+    "Enter the code by hand" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir le code à la main"
           }
         }
       }
@@ -331,6 +381,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Données locales"
+          }
+        }
+      }
+    },
+    "Locked artwork" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Œuvre verrouillée"
+          }
+        }
+      }
+    },
+    "Locked image" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image verrouillée"
+          }
+        }
+      }
+    },
+    "Locked, a ticket is required" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verrouillé, un billet est nécessaire"
           }
         }
       }
@@ -545,6 +625,16 @@
         }
       }
     },
+    "Scan the QR code" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanner le QR code"
+          }
+        }
+      }
+    },
     "Search" : {
       "localizations" : {
         "fr" : {
@@ -601,6 +691,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L'app compare cette empreinte à celle du serveur à chaque lancement et ne retélécharge que ce qui a changé."
+          }
+        }
+      }
+    },
+    "The camera is not allowed. Enable it in Settings, or type the code by hand." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’appareil photo n’est pas autorisé. Activez-le dans Réglages, ou saisissez le code à la main."
+          }
+        }
+      }
+    },
+    "The camera is unavailable. Type the code by hand instead." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’appareil photo n’est pas disponible. Saisissez le code à la main."
           }
         }
       }
@@ -675,6 +785,16 @@
         }
       }
     },
+    "This code does not unlock this exhibition." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce code ne débloque pas cette exposition."
+          }
+        }
+      }
+    },
     "This exhibition has no artwork yet." : {
       "localizations" : {
         "fr" : {
@@ -691,6 +811,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cet étage n’a pas encore de plan."
+          }
+        }
+      }
+    },
+    "Ticket required" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Billet nécessaire"
           }
         }
       }
@@ -731,6 +861,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réponse inattendue du serveur : %@"
+          }
+        }
+      }
+    },
+    "Unlock" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloquer"
+          }
+        }
+      }
+    },
+    "Unlocked until %@" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloqué jusqu’à %@"
           }
         }
       }
