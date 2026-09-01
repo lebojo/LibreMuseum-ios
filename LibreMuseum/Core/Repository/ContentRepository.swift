@@ -23,12 +23,30 @@ final class ContentRepository: ContentRepositoryProtocol {
         self.context = context
     }
 
+    private func everyPage<Item: Decodable & Sendable>(
+        of collection: PocketBaseCollection,
+        query makeQuery: (Int) -> PocketBaseQuery
+    ) async throws -> [Item] {
+        var items: [Item] = []
+        var page = 1
+
+        while true {
+            let response: PocketBaseListResponse<Item> = try await client.list(
+                collection,
+                query: makeQuery(page)
+            )
+            items.append(contentsOf: response.items)
+            guard response.hasMorePages else { break }
+            page += 1
+        }
+        return items
+    }
+
     func loadShell(version: String) async throws {
-        let languages: PocketBaseListResponse<LanguageDTO> = try await client.list(
-            .language,
-            query: PocketBaseQuery(perPage: 200, sort: "sort,code", skipTotal: true)
-        )
-        try await importer.importLanguages(languages.items, version: version)
+        let languages: [LanguageDTO] = try await everyPage(of: .language) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, sort: "sort,code", skipTotal: true)
+        }
+        try await importer.importLanguages(languages, version: version)
 
         let museums: PocketBaseListResponse<MuseumDTO> = try await client.list(
             .museum,
@@ -39,120 +57,97 @@ final class ContentRepository: ContentRepositoryProtocol {
             try await importer.importMuseum(museum, version: version)
         }
 
-        let pages: PocketBaseListResponse<PageDTO> = try await client.list(
-            .page,
-            query: PocketBaseQuery(perPage: 200, sort: "sort,slug", skipTotal: true)
-        )
-        let pageTranslations: PocketBaseListResponse<PageTranslationDTO> = try await client.list(
-            .pageTranslation,
-            query: PocketBaseQuery(perPage: 500, skipTotal: true)
-        )
+        let pages: [PageDTO] = try await everyPage(of: .page) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, sort: "sort,slug", skipTotal: true)
+        }
+        let pageTranslations: [PageTranslationDTO] = try await everyPage(of: .pageTranslation) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, skipTotal: true)
+        }
         try await importer.importPages(
-            pages.items,
-            translations: pageTranslations.items,
-            version: version
+            pages,
+            translations: pageTranslations,
+            version: version,
+            isCompleteSet: true
         )
     }
 
     func loadExhibitions(version: String) async throws {
-        var all: [ExhibitionDTO] = []
-        var page = 1
-
-        while true {
-            let response: PocketBaseListResponse<ExhibitionDTO> = try await client.list(
-                .exhibition,
-                query: PocketBaseQuery(
-                    page: page,
-                    perPage: Self.pageSize,
-                    sort: "sort,slug",
-                    skipTotal: true
-                )
-            )
-            all.append(contentsOf: response.items)
-            guard response.hasMorePages else { break }
-            page += 1
+        let exhibitions: [ExhibitionDTO] = try await everyPage(of: .exhibition) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, sort: "sort,slug", skipTotal: true)
+        }
+        let translations: [ExhibitionTranslationDTO] = try await everyPage(
+            of: .exhibitionTranslation
+        ) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, skipTotal: true)
         }
 
-        let translations: PocketBaseListResponse<ExhibitionTranslationDTO> = try await client.list(
-            .exhibitionTranslation,
-            query: PocketBaseQuery(perPage: PocketBaseQuery.maxPerPage, skipTotal: true)
-        )
-
         try await importer.importExhibitions(
-            all,
-            translations: translations.items,
+            exhibitions,
+            translations: translations,
             version: version,
             isCompleteSet: true
         )
     }
 
     func loadMap(version: String) async throws {
-        let floors: PocketBaseListResponse<FloorDTO> = try await client.list(
-            .floor,
-            query: PocketBaseQuery(perPage: 100, sort: "level", skipTotal: true)
-        )
-        let rooms: PocketBaseListResponse<RoomDTO> = try await client.list(
-            .room,
-            query: PocketBaseQuery(perPage: PocketBaseQuery.maxPerPage, sort: "sort,name", skipTotal: true)
-        )
-        try await importer.importMap(floors: floors.items, rooms: rooms.items, version: version)
+        let floors: [FloorDTO] = try await everyPage(of: .floor) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, sort: "level", skipTotal: true)
+        }
+        let rooms: [RoomDTO] = try await everyPage(of: .room) {
+            PocketBaseQuery(page: $0, perPage: Self.pageSize, sort: "sort,name", skipTotal: true)
+        }
+        try await importer.importMap(floors: floors, rooms: rooms, version: version)
     }
 
     func loadArtworks(exhibitionID: String, version: String) async throws {
         let quoted = PocketBaseQuery.quotedFilterValue(exhibitionID)
-        var all: [ArtworkDTO] = []
-        var page = 1
 
-        while true {
-            let response: PocketBaseListResponse<ArtworkDTO> = try await client.list(
-                .artwork,
-                query: PocketBaseQuery(
-                    page: page,
-                    perPage: Self.pageSize,
-                    filter: "(exhibition=\(quoted))",
-                    sort: "sort,code",
-                    skipTotal: true
-                )
+        let artworks: [ArtworkDTO] = try await everyPage(of: .artwork) {
+            PocketBaseQuery(
+                page: $0,
+                perPage: Self.pageSize,
+                filter: "(exhibition=\(quoted))",
+                sort: "sort,code",
+                skipTotal: true
             )
-            all.append(contentsOf: response.items)
-            guard response.hasMorePages else { break }
-            page += 1
         }
-
-        let translations: PocketBaseListResponse<ArtworkTranslationDTO> = try await client.list(
-            .artworkTranslation,
-            query: PocketBaseQuery(
-                perPage: PocketBaseQuery.maxPerPage,
+        let translations: [ArtworkTranslationDTO] = try await everyPage(of: .artworkTranslation) {
+            PocketBaseQuery(
+                page: $0,
+                perPage: Self.pageSize,
                 filter: "(artwork.exhibition=\(quoted))",
                 fields: "id,collectionName,artwork,language,title,audio,audio_duration",
                 skipTotal: true
             )
-        )
+        }
 
         try await importer.importArtworks(
-            all,
-            translations: translations.items,
+            artworks,
+            translations: translations,
             version: version,
-            includesFullText: false
+            includesFullText: false,
+            isCompleteSet: true
         )
-        try await importer.pruneArtworks(exhibitionID: exhibitionID, keeping: all.map(\.id))
+        try await importer.pruneArtworks(exhibitionID: exhibitionID, keeping: artworks.map(\.id))
     }
 
     func loadArtworkDetail(id: String, version: String) async throws {
         let artwork: ArtworkDTO = try await client.record(.artwork, id: id, query: PocketBaseQuery())
-        let translations: PocketBaseListResponse<ArtworkTranslationDTO> = try await client.list(
-            .artworkTranslation,
-            query: PocketBaseQuery(
-                perPage: 50,
-                filter: "(artwork=\(PocketBaseQuery.quotedFilterValue(id)))",
+        let quoted = PocketBaseQuery.quotedFilterValue(id)
+        let translations: [ArtworkTranslationDTO] = try await everyPage(of: .artworkTranslation) {
+            PocketBaseQuery(
+                page: $0,
+                perPage: Self.pageSize,
+                filter: "(artwork=\(quoted))",
                 skipTotal: true
             )
-        )
+        }
         try await importer.importArtworks(
             [artwork],
-            translations: translations.items,
+            translations: translations,
             version: version,
-            includesFullText: true
+            includesFullText: true,
+            isCompleteSet: true
         )
     }
 
@@ -179,7 +174,7 @@ final class ContentRepository: ContentRepositoryProtocol {
         var descriptor = FetchDescriptor<ArtworkEntity>(predicate: ArtworkEntity.predicate(id: id))
         descriptor.fetchLimit = 1
         guard let artwork = try? context.fetch(descriptor).first else { return true }
-        return !artwork.hasFullText || artwork.fetchedVersion != version
+        return artwork.fullTextVersion != version
     }
 
     func cachedExhibitionIDs() -> [String] {

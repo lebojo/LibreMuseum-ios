@@ -16,7 +16,7 @@ final class ArtworkEntity {
     var imagePaths: [String]
     var sort: Int
     var fetchedVersion: String
-    var hasFullText: Bool
+    var fullTextVersion: String = ""
     @Relationship(deleteRule: .cascade, inverse: \ArtworkTranslationEntity.artwork)
     var translations: [ArtworkTranslationEntity] = []
 
@@ -38,7 +38,7 @@ final class ArtworkEntity {
         imagePaths: [String] = [],
         sort: Int = 0,
         fetchedVersion: String = "",
-        hasFullText: Bool = false
+        fullTextVersion: String = ""
     ) {
         self.id = id
         self.exhibitionID = exhibitionID
@@ -53,7 +53,7 @@ final class ArtworkEntity {
         self.imagePaths = imagePaths
         self.sort = sort
         self.fetchedVersion = fetchedVersion
-        self.hasFullText = hasFullText
+        self.fullTextVersion = fullTextVersion
     }
 }
 
