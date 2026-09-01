@@ -61,8 +61,54 @@ extension Font {
 extension String {
     var strippingHTMLTags: String {
         replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+            .decodingNumericHTMLEntities
             .replacingOccurrences(of: "&nbsp;", with: " ")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
             .replacingOccurrences(of: "&amp;", with: "&")
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var decodingNumericHTMLEntities: String {
+        guard contains("&#"),
+              let matcher = try? NSRegularExpression(
+                  pattern: "&#(x[0-9a-f]+|[0-9]+);",
+                  options: .caseInsensitive
+              )
+        else { return self }
+
+        var decoded = ""
+        var cursor = startIndex
+        for match in matcher.matches(in: self, range: NSRange(startIndex..., in: self)) {
+            guard let entity = Range(match.range, in: self),
+                  let digits = Range(match.range(at: 1), in: self),
+                  let character = Self.character(fromHTMLCodePoint: self[digits])
+            else { continue }
+
+            decoded += self[cursor..<entity.lowerBound]
+            decoded.append(character)
+            cursor = entity.upperBound
+        }
+        return decoded + self[cursor...]
+    }
+
+    private static func character(fromHTMLCodePoint digits: Substring) -> Character? {
+        let hexadecimal = digits.first == "x" || digits.first == "X"
+        let value = hexadecimal
+            ? UInt32(digits.dropFirst(), radix: 16)
+            : UInt32(digits, radix: 10)
+
+        guard let value, let scalar = Unicode.Scalar(value) else { return nil }
+        return Character(scalar)
+    }
+
+    var strippingHTMLTagsKeepingLineBreaks: String {
+        replacingOccurrences(
+            of: "</(p|div|li|h[1-6]|blockquote|tr)>|<br[^>]*>",
+            with: "\n",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        .strippingHTMLTags
     }
 }

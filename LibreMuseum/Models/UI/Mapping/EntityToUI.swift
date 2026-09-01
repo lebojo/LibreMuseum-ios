@@ -125,6 +125,7 @@ enum EntityToUI {
             text: translation?.text ?? "",
             audioPath: translation?.audioPath ?? "",
             audioDuration: translation?.audioDuration ?? 0,
+            textLanguageCode: translation?.languageCode ?? "",
             hasTranslation: translation != nil
         )
     }

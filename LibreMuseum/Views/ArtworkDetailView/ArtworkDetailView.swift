@@ -57,6 +57,9 @@ struct ArtworkDetailView: View {
                     if artwork.hasAudioGuide {
                         AudioGuideView(path: artwork.audioPath, announcedDuration: artwork.audioDuration)
                             .padding(.horizontal)
+                    } else if artwork.hasReadAloudGuide {
+                        ReadAloudGuideView(html: artwork.text, languageCode: artwork.textLanguageCode)
+                            .padding(.horizontal)
                     }
 
                     if !artwork.text.isEmpty {

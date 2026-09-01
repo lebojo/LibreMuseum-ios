@@ -23,7 +23,9 @@ nonisolated struct ArtworkDetailUI: Identifiable, Sendable, Equatable {
     let text: String
     let audioPath: String
     let audioDuration: Int
+    let textLanguageCode: String
     let hasTranslation: Bool
 
     var hasAudioGuide: Bool { !audioPath.isEmpty }
+    var hasReadAloudGuide: Bool { audioPath.isEmpty && !text.isEmpty }
 }
