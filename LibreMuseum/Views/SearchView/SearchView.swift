@@ -121,10 +121,10 @@ struct SearchView: View {
             .searchable(text: $query, prompt: "Title, artist or label number")
             .searchFocused($isSearchFocused)
             .task {
+                isSearchFocused = true
                 isLoadingIndex = true
                 await sync.loadEveryArtworkIfNeeded()
                 isLoadingIndex = false
-                isSearchFocused = true
             }
         }
     }
