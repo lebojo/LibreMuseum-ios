@@ -10,6 +10,7 @@ nonisolated struct MuseumDTO: Decodable, Sendable {
     let primaryColor: String
     let accentColor: String
     let defaultLanguageID: String
+    let ticketValidityHours: Int
     let website: String
     let email: String
     let phone: String
@@ -30,6 +31,7 @@ nonisolated struct MuseumDTO: Decodable, Sendable {
         case primaryColor = "primary_color"
         case accentColor = "accent_color"
         case defaultLanguageID = "default_lang"
+        case ticketValidityHours = "ticket_validity_hours"
         case location
     }
 
@@ -48,6 +50,7 @@ nonisolated struct MuseumDTO: Decodable, Sendable {
         primaryColor = container.stringOrEmpty(.primaryColor)
         accentColor = container.stringOrEmpty(.accentColor)
         defaultLanguageID = container.stringOrEmpty(.defaultLanguageID)
+        ticketValidityHours = container.intOrZero(.ticketValidityHours)
         website = container.stringOrEmpty(.website)
         email = container.stringOrEmpty(.email)
         phone = container.stringOrEmpty(.phone)

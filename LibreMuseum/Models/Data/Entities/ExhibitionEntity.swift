@@ -11,6 +11,8 @@ final class ExhibitionEntity {
     var startDate: Date?
     var endDate: Date?
     var roomIDs: [String]
+    var requiresTicket: Bool = false
+    var unlockCode: String = ""
     var sort: Int
     var fetchedVersion: String
     @Relationship(deleteRule: .cascade, inverse: \ExhibitionTranslationEntity.exhibition)
@@ -25,6 +27,8 @@ final class ExhibitionEntity {
         startDate: Date? = nil,
         endDate: Date? = nil,
         roomIDs: [String] = [],
+        requiresTicket: Bool = false,
+        unlockCode: String = "",
         sort: Int = 0,
         fetchedVersion: String = ""
     ) {
@@ -36,6 +40,8 @@ final class ExhibitionEntity {
         self.startDate = startDate
         self.endDate = endDate
         self.roomIDs = roomIDs
+        self.requiresTicket = requiresTicket
+        self.unlockCode = unlockCode
         self.sort = sort
         self.fetchedVersion = fetchedVersion
     }

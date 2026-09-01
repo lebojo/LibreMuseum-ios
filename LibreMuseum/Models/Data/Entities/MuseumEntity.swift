@@ -11,6 +11,7 @@ final class MuseumEntity {
     var primaryColorHex: String
     var accentColorHex: String
     var defaultLanguageID: String
+    var ticketValidityHours: Int = 0
     var website: String
     var email: String
     var phone: String
@@ -28,6 +29,7 @@ final class MuseumEntity {
         primaryColorHex: String = "",
         accentColorHex: String = "",
         defaultLanguageID: String = "",
+        ticketValidityHours: Int = 0,
         website: String = "",
         email: String = "",
         phone: String = "",
@@ -44,6 +46,7 @@ final class MuseumEntity {
         self.primaryColorHex = primaryColorHex
         self.accentColorHex = accentColorHex
         self.defaultLanguageID = defaultLanguageID
+        self.ticketValidityHours = ticketValidityHours
         self.website = website
         self.email = email
         self.phone = phone
