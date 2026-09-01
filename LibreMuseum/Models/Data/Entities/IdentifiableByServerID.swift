@@ -6,6 +6,10 @@ nonisolated protocol IdentifiableByServerID {
     static func predicate(id: String) -> Predicate<Self>
 }
 
+nonisolated protocol LocalizedTranslation: IdentifiableByServerID {
+    var languageCode: String { get }
+}
+
 extension MuseumEntity: IdentifiableByServerID {
     var serverID: String { id }
 
@@ -93,3 +97,9 @@ extension SyncStateEntity: IdentifiableByServerID {
         #Predicate { $0.id == id }
     }
 }
+
+extension ExhibitionTranslationEntity: LocalizedTranslation {}
+
+extension ArtworkTranslationEntity: LocalizedTranslation {}
+
+extension PageTranslationEntity: LocalizedTranslation {}
