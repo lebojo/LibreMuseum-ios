@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ExhibitionHeaderView: View {
     let exhibition: ExhibitionDetailUI
+    let onUnlock: () -> Void
 
     private var schedule: ExhibitionScheduleView.Schedule? {
         if exhibition.isPermanent { return .permanent }
@@ -26,6 +27,9 @@ struct ExhibitionHeaderView: View {
                 if let schedule {
                     ExhibitionScheduleView(schedule: schedule)
                 }
+
+                TicketNoticeView(exhibition: exhibition, onUnlock: onUnlock)
+                    .padding(.top, 4)
 
                 if exhibition.hasAudioGuide {
                     AudioGuideView(path: exhibition.audioPath)

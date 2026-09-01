@@ -9,6 +9,7 @@ struct SearchView: View {
     }
 
     @Environment(ContentSyncService.self) private var sync
+    @Environment(TicketStore.self) private var tickets
     @Query private var museums: [MuseumEntity]
     @Query(
         filter: #Predicate<LanguageEntity> { $0.isActive },
@@ -23,6 +24,7 @@ struct SearchView: View {
     @State private var isLoadingIndex = false
     @State private var hasFocusedSearch = false
     @FocusState private var isSearchFocused: Bool
+    @State private var promptedExhibition: LockedExhibitionUI?
 
     private var languageContext: LanguageContext {
         EntityToUI.languageContext(
@@ -32,12 +34,17 @@ struct SearchView: View {
         )
     }
 
+    private var ticketAccess: TicketAccess {
+        EntityToUI.ticketAccess(exhibitions: exhibitions, in: languageContext, tickets: tickets)
+    }
+
     private var artworkResults: [ArtworkUI] {
         guard !query.isEmpty else { return [] }
         let context = languageContext
+        let access = ticketAccess
 
         let ranked = artworks.enumerated().compactMap { position, entity -> RankedArtwork? in
-            let item = EntityToUI.artwork(entity, in: context)
+            let item = EntityToUI.artwork(entity, in: context, access: access)
             let fields = ArtworkSearch.Fields(
                 code: item.code,
                 titles: item.searchableTitles,
@@ -57,8 +64,9 @@ struct SearchView: View {
     private var exhibitionResults: [ExhibitionUI] {
         guard !query.isEmpty else { return [] }
         let context = languageContext
+        let access = ticketAccess
         return exhibitions
-            .map { EntityToUI.exhibition($0, in: context) }
+            .map { EntityToUI.exhibition($0, in: context, access: access) }
             .filter { ArtworkSearch.matches($0.searchableTitles, query: query) }
     }
 
@@ -92,8 +100,9 @@ struct SearchView: View {
                     if !matchedArtworks.isEmpty {
                         Section("Artworks") {
                             ForEach(matchedArtworks) { artwork in
-                                NavigationLink(value: artwork) {
-                                    ArtworkRowView(artwork: artwork)
+                                ArtworkLinkView(artwork: artwork) {
+                                    promptedExhibition = ticketAccess
+                                        .lockedExhibition(id: artwork.exhibitionID)
                                 }
                             }
                         }
@@ -116,6 +125,7 @@ struct SearchView: View {
             .navigationDestination(for: ExhibitionUI.self) {
                 ExhibitionDetailView(exhibitionID: $0.id)
             }
+            .ticketPrompt(for: $promptedExhibition)
             .searchable(text: $query, prompt: "Title, artist or label number")
             .searchFocused($isSearchFocused)
             .task {

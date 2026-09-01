@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ExhibitionDetailView: View {
     @Environment(ContentSyncService.self) private var sync
+    @Environment(TicketStore.self) private var tickets
     @Query private var museums: [MuseumEntity]
     @Query(
         filter: #Predicate<LanguageEntity> { $0.isActive },
@@ -12,6 +13,7 @@ struct ExhibitionDetailView: View {
     @Query private var exhibitions: [ExhibitionEntity]
     @Query private var artworks: [ArtworkEntity]
     @State private var isLoadingArtworks = false
+    @State private var promptedExhibition: LockedExhibitionUI?
 
     let exhibitionID: String
 
@@ -32,13 +34,24 @@ struct ExhibitionDetailView: View {
         )
     }
 
+    private var ticketAccess: TicketAccess {
+        EntityToUI.ticketAccess(exhibitions: exhibitions, in: languageContext, tickets: tickets)
+    }
+
     private var detail: ExhibitionDetailUI? {
         guard let entity = exhibitions.first else { return nil }
-        return EntityToUI.exhibitionDetail(entity, in: languageContext)
+        return EntityToUI.exhibitionDetail(
+            entity,
+            in: languageContext,
+            access: ticketAccess,
+            tickets: tickets
+        )
     }
 
     private var artworkItems: [ArtworkUI] {
-        artworks.map { EntityToUI.artwork($0, in: languageContext) }
+        let context = languageContext
+        let access = ticketAccess
+        return artworks.map { EntityToUI.artwork($0, in: context, access: access) }
     }
 
     private var emptyState: ContentStateView.State {
@@ -51,7 +64,7 @@ struct ExhibitionDetailView: View {
         List {
             if let detail {
                 Section {
-                    ExhibitionHeaderView(exhibition: detail)
+                    ExhibitionHeaderView(exhibition: detail) { promptUnlock() }
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                 }
@@ -66,9 +79,7 @@ struct ExhibitionDetailView: View {
             } else {
                 Section("Artworks") {
                     ForEach(artworkItems) { item in
-                        NavigationLink(value: item) {
-                            ArtworkRowView(artwork: item)
-                        }
+                        ArtworkLinkView(artwork: item) { promptUnlock() }
                     }
                 }
             }
@@ -76,11 +87,16 @@ struct ExhibitionDetailView: View {
         .listStyle(.plain)
         .navigationTitle(detail?.title ?? "")
         .navigationDestination(for: ArtworkUI.self) { ArtworkDetailView(artworkID: $0.id) }
+        .ticketPrompt(for: $promptedExhibition)
         .refreshable { await sync.reloadArtworks(exhibitionID: exhibitionID) }
         .task {
             isLoadingArtworks = true
             await sync.loadArtworksIfNeeded(exhibitionID: exhibitionID)
             isLoadingArtworks = false
         }
+    }
+
+    private func promptUnlock() {
+        promptedExhibition = ticketAccess.lockedExhibition(id: exhibitionID)
     }
 }

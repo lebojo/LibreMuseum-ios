@@ -3,6 +3,7 @@ import SwiftUI
 
 struct MapView: View {
     @Environment(ContentSyncService.self) private var sync
+    @Environment(TicketStore.self) private var tickets
     @Query private var museums: [MuseumEntity]
     @Query(
         filter: #Predicate<LanguageEntity> { $0.isActive },
@@ -20,6 +21,7 @@ struct MapView: View {
     @State private var selectedFloorID = ""
     @State private var selectedPin: MapPinUI?
     @State private var isLoadingMap = false
+    @State private var promptedExhibition: LockedExhibitionUI?
 
     private var languageContext: LanguageContext {
         EntityToUI.languageContext(
@@ -27,6 +29,10 @@ struct MapView: View {
             languages: languages,
             selectedCode: sync.selectedLanguageCode
         )
+    }
+
+    private var ticketAccess: TicketAccess {
+        EntityToUI.ticketAccess(exhibitions: exhibitions, in: languageContext, tickets: tickets)
     }
 
     private var floorItems: [FloorUI] {
@@ -55,13 +61,16 @@ struct MapView: View {
             exhibitions.map { ($0.id, $0) },
             uniquingKeysWith: { first, _ in first }
         )
+        let context = languageContext
+        let access = ticketAccess
         return artworks
             .filter { roomIDs.contains($0.roomID) }
             .compactMap {
                 EntityToUI.mapPin(
                     $0,
                     exhibition: exhibitionsByID[$0.exhibitionID],
-                    in: languageContext
+                    in: context,
+                    access: access
                 )
             }
     }
@@ -87,7 +96,7 @@ struct MapView: View {
                         FloorPlanView(
                             mapPath: selectedFloor.mapPath,
                             pins: pins,
-                            onSelect: { selectedPin = $0 }
+                            onSelect: open
                         )
                         .ignoresSafeArea()
                     } else {
@@ -104,6 +113,7 @@ struct MapView: View {
                 }
             }
             .navigationDestination(item: $selectedPin) { ArtworkDetailView(artworkID: $0.id) }
+            .ticketPrompt(for: $promptedExhibition)
             .task {
                 isLoadingMap = true
                 await sync.loadMapIfNeeded()
@@ -112,5 +122,17 @@ struct MapView: View {
                 isLoadingMap = false
             }
         }
+    }
+
+    private func open(_ pin: MapPinUI) {
+        if pin.isLocked {
+            promptUnlock(for: pin.exhibitionID)
+        } else {
+            selectedPin = pin
+        }
+    }
+
+    private func promptUnlock(for exhibitionID: String) {
+        promptedExhibition = ticketAccess.lockedExhibition(id: exhibitionID)
     }
 }

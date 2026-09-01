@@ -17,6 +17,31 @@ enum EntityToUI {
         return LanguageContext(displayCode: display, museumDefaultCode: museumDefault)
     }
 
+    static func ticketAccess(
+        exhibitions: [ExhibitionEntity],
+        in context: LanguageContext,
+        tickets: TicketStore
+    ) -> TicketAccess {
+        let locked = exhibitions
+            .filter { $0.requiresTicket && !tickets.isUnlocked(exhibitionID: $0.id) }
+            .map { entity in
+                let translation = LanguageResolver.pick(
+                    from: entity.translations,
+                    in: context,
+                    languageCode: \.languageCode
+                )
+                return LockedExhibitionUI(
+                    id: entity.id,
+                    title: translation?.title.nilIfEmpty ?? entity.slug,
+                    unlockCode: entity.unlockCode
+                )
+            }
+
+        return TicketAccess(
+            lockedByExhibitionID: Dictionary(uniqueKeysWithValues: locked.map { ($0.id, $0) })
+        )
+    }
+
     static func museum(_ entity: MuseumEntity) -> MuseumUI {
         MuseumUI(
             id: entity.id,
@@ -38,7 +63,11 @@ enum EntityToUI {
         )
     }
 
-    static func exhibition(_ entity: ExhibitionEntity, in context: LanguageContext) -> ExhibitionUI {
+    static func exhibition(
+        _ entity: ExhibitionEntity,
+        in context: LanguageContext,
+        access: TicketAccess = .nothingLocked
+    ) -> ExhibitionUI {
         let translation = LanguageResolver.pick(
             from: entity.translations,
             in: context,
@@ -57,13 +86,17 @@ enum EntityToUI {
             endDate: entity.endDate,
             dateRange: dateRange(start: entity.startDate, end: entity.endDate,
                                  isPermanent: entity.isPermanent),
-            hasTranslation: translation != nil
+            hasTranslation: translation != nil,
+            requiresTicket: entity.requiresTicket,
+            isLocked: access.isLocked(exhibitionID: entity.id)
         )
     }
 
     static func exhibitionDetail(
         _ entity: ExhibitionEntity,
-        in context: LanguageContext
+        in context: LanguageContext,
+        access: TicketAccess = .nothingLocked,
+        tickets: TicketStore? = nil
     ) -> ExhibitionDetailUI {
         let translation = LanguageResolver.pick(
             from: entity.translations,
@@ -81,11 +114,19 @@ enum EntityToUI {
             dateRange: dateRange(start: entity.startDate, end: entity.endDate,
                                  isPermanent: entity.isPermanent),
             audioPath: translation?.audioPath ?? "",
-            hasTranslation: translation != nil
+            hasTranslation: translation != nil,
+            requiresTicket: entity.requiresTicket,
+            isLocked: access.isLocked(exhibitionID: entity.id),
+            unlockCode: entity.unlockCode,
+            unlockedUntil: tickets?.unlockedUntil(exhibitionID: entity.id)
         )
     }
 
-    static func artwork(_ entity: ArtworkEntity, in context: LanguageContext) -> ArtworkUI {
+    static func artwork(
+        _ entity: ArtworkEntity,
+        in context: LanguageContext,
+        access: TicketAccess = .nothingLocked
+    ) -> ArtworkUI {
         let translation = LanguageResolver.pick(
             from: entity.translations,
             in: context,
@@ -95,20 +136,23 @@ enum EntityToUI {
 
         return ArtworkUI(
             id: entity.id,
+            exhibitionID: entity.exhibitionID,
             code: entity.code,
             title: displayTitle,
             searchableTitles: searchIndex(displayTitle, entity.translations.map(\.title)),
             artist: entity.artist,
             year: entity.year,
             thumbnailPath: entity.imagePaths.first ?? "",
-            hasAudioGuide: !(translation?.audioPath ?? "").isEmpty
+            hasAudioGuide: !(translation?.audioPath ?? "").isEmpty,
+            isLocked: access.isLocked(exhibitionID: entity.exhibitionID)
         )
     }
 
     static func artworkDetail(
         _ entity: ArtworkEntity,
         rooms: [RoomEntity],
-        in context: LanguageContext
+        in context: LanguageContext,
+        access: TicketAccess = .nothingLocked
     ) -> ArtworkDetailUI {
         let translation = LanguageResolver.pick(
             from: entity.translations,
@@ -118,6 +162,7 @@ enum EntityToUI {
 
         return ArtworkDetailUI(
             id: entity.id,
+            exhibitionID: entity.exhibitionID,
             code: entity.code,
             title: title(of: entity, translated: translation?.title),
             artist: entity.artist,
@@ -130,14 +175,16 @@ enum EntityToUI {
             audioPath: translation?.audioPath ?? "",
             audioDuration: translation?.audioDuration ?? 0,
             textLanguageCode: translation?.languageCode ?? "",
-            hasTranslation: translation != nil
+            hasTranslation: translation != nil,
+            isLocked: access.isLocked(exhibitionID: entity.exhibitionID)
         )
     }
 
     static func mapPin(
         _ entity: ArtworkEntity,
         exhibition: ExhibitionEntity?,
-        in context: LanguageContext
+        in context: LanguageContext,
+        access: TicketAccess = .nothingLocked
     ) -> MapPinUI? {
         guard entity.hasMapPosition else { return nil }
         let translation = LanguageResolver.pick(
@@ -153,12 +200,14 @@ enum EntityToUI {
 
         return MapPinUI(
             id: entity.id,
+            exhibitionID: entity.exhibitionID,
             label: entity.code,
             title: title(of: entity, translated: translation?.title),
             exhibitionTitle: exhibitionTranslation?.title.nilIfEmpty ?? exhibition?.slug ?? "",
             colorHex: exhibition?.colorHex ?? "",
             relativeX: min(max(entity.posX, 0), 1),
-            relativeY: min(max(entity.posY, 0), 1)
+            relativeY: min(max(entity.posY, 0), 1),
+            isLocked: access.isLocked(exhibitionID: entity.exhibitionID)
         )
     }
 

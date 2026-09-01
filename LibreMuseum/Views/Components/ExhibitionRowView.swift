@@ -30,6 +30,10 @@ struct ExhibitionRowView: View {
                 }
             }
             Spacer(minLength: 0)
+
+            if exhibition.isLocked {
+                LockBadgeView()
+            }
         }
         .padding(.vertical, 4)
     }

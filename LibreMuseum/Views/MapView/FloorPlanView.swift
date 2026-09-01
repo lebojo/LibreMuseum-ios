@@ -42,7 +42,11 @@ struct FloorPlanView: View {
                     Button {
                         onSelect(pin)
                     } label: {
-                        MapPinView(label: pin.label, colorHex: pin.colorHex)
+                        MapPinView(
+                            label: pin.label,
+                            colorHex: pin.colorHex,
+                            isLocked: pin.isLocked
+                        )
                     }
                     .buttonStyle(.plain)
                     .offset(

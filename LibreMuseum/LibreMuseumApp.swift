@@ -5,6 +5,7 @@ import SwiftUI
 struct LibreMuseumApp: App {
     @State private var sync: ContentSyncService
     @State private var theme = MuseumTheme()
+    @State private var tickets = TicketStore()
 
     private let modelContainer: ModelContainer
     private let mediaStore: MediaStore
@@ -23,6 +24,7 @@ struct LibreMuseumApp: App {
             ContentView()
                 .environment(sync)
                 .environment(theme)
+                .environment(tickets)
                 .environment(\.mediaStore, mediaStore)
         }
         .modelContainer(modelContainer)
