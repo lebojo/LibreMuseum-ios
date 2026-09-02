@@ -22,8 +22,12 @@ enum EntityToUI {
         in context: LanguageContext,
         tickets: TicketStore
     ) -> TicketAccess {
+        // A museum that ticked `requires_ticket` but left `unlock_code` empty
+        // would lock its artworks behind a code no scan can ever match: the
+        // visitor is better served by an open exhibition than by a dead end.
         let locked = exhibitions
-            .filter { $0.requiresTicket && !tickets.isUnlocked(exhibitionID: $0.id) }
+            .filter { $0.requiresTicket && !$0.unlockCode.isEmpty }
+            .filter { !tickets.isUnlocked(exhibitionID: $0.id) }
             .map { entity in
                 let translation = LanguageResolver.pick(
                     from: entity.translations,
