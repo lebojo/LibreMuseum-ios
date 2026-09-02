@@ -2,6 +2,11 @@ import SwiftData
 import SwiftUI
 
 struct ArtworkDetailView: View {
+    private struct Content {
+        let artwork: ArtworkDetailUI
+        let lockedExhibition: LockedExhibitionUI?
+    }
+
     @Environment(ContentSyncService.self) private var sync
     @Environment(TicketStore.self) private var tickets
     @Query private var museums: [MuseumEntity]
@@ -12,7 +17,8 @@ struct ArtworkDetailView: View {
     private var languages: [LanguageEntity]
     @Query private var rooms: [RoomEntity]
     @Query private var artworks: [ArtworkEntity]
-    @Query private var exhibitions: [ExhibitionEntity]
+    @Query(filter: #Predicate<ExhibitionEntity> { $0.requiresTicket })
+    private var payingExhibitions: [ExhibitionEntity]
     @State private var isLoadingDetail = false
     @State private var promptedExhibition: LockedExhibitionUI?
 
@@ -31,25 +37,29 @@ struct ArtworkDetailView: View {
         )
     }
 
-    private var ticketAccess: TicketAccess {
-        EntityToUI.ticketAccess(exhibitions: exhibitions, in: languageContext, tickets: tickets)
-    }
-
-    private var artwork: ArtworkDetailUI? {
+    // The locked exhibition is resolved alongside the artwork rather than after
+    // it: both need the same `TicketAccess`, which walks every paying
+    // exhibition's translations. `body` reads this once.
+    private var resolvedContent: Content? {
         guard let entity = artworks.first else { return nil }
-        return EntityToUI.artworkDetail(
+        let access = EntityToUI.ticketAccess(
+            exhibitions: payingExhibitions,
+            in: languageContext,
+            tickets: tickets
+        )
+        let artwork = EntityToUI.artworkDetail(
             entity,
             rooms: rooms,
             in: languageContext,
-            access: ticketAccess
+            access: access
         )
-    }
 
-    // Reachable when a ticket expires while this very screen is open: the
-    // artwork has to close behind the visitor, not stay on display.
-    private var lockedExhibition: LockedExhibitionUI? {
-        guard let artwork, artwork.isLocked else { return nil }
-        return ticketAccess.lockedExhibition(id: artwork.exhibitionID)
+        return Content(
+            artwork: artwork,
+            lockedExhibition: artwork.isLocked
+                ? access.lockedExhibition(id: artwork.exhibitionID)
+                : nil
+        )
     }
 
     private var missingState: ContentStateView.State {
@@ -59,13 +69,17 @@ struct ArtworkDetailView: View {
     }
 
     var body: some View {
+        let content = resolvedContent
+
         ScrollView {
-            if let lockedExhibition {
+            // Reachable when a ticket expires while this very screen is open:
+            // the artwork has to close behind the visitor, not stay on display.
+            if let lockedExhibition = content?.lockedExhibition {
                 LockedContentView(exhibition: lockedExhibition) {
                     promptedExhibition = lockedExhibition
                 }
                 .padding(.top, 40)
-            } else if let artwork {
+            } else if let artwork = content?.artwork {
                 VStack(alignment: .leading, spacing: 20) {
                     if !artwork.imagePaths.isEmpty {
                         ArtworkGalleryView(imagePaths: artwork.imagePaths)
@@ -101,7 +115,7 @@ struct ArtworkDetailView: View {
                 .padding(.top, 80)
             }
         }
-        .navigationTitle(lockedExhibition == nil ? (artwork?.title ?? "") : "")
+        .navigationTitle(content?.lockedExhibition == nil ? (content?.artwork.title ?? "") : "")
         .ticketPrompt(for: $promptedExhibition)
         .task {
             isLoadingDetail = true
