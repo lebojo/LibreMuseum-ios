@@ -17,7 +17,9 @@ nonisolated enum TicketCode {
         guard let components = URLComponents(string: trimmed), components.scheme != nil else {
             return found
         }
-        found.append(contentsOf: components.path.split(separator: "/").map(String.init))
+        if let lastPathComponent = components.path.split(separator: "/").last {
+            found.append(String(lastPathComponent))
+        }
         found.append(contentsOf: components.queryItems?.compactMap(\.value) ?? [])
         return found
     }
