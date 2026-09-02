@@ -33,12 +33,6 @@ final class TicketStore {
         scheduleNextExpiry()
     }
 
-    func lockEverything() {
-        unlockedUntil = [:]
-        persist()
-        scheduleNextExpiry()
-    }
-
     private func dropExpired() {
         let now = Date.now
         let live = unlockedUntil.filter { $0.value > now }
