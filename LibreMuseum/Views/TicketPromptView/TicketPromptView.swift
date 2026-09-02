@@ -13,11 +13,20 @@ struct TicketPromptView: View {
     @Environment(TicketStore.self) private var tickets
     @Query private var museums: [MuseumEntity]
     @State private var isScanning = false
+    @State private var scannedPayload: String?
     @State private var outcome: Outcome = .waiting
 
     let exhibition: LockedExhibitionUI
 
     private var validityHours: Int { museums.first?.ticketValidityHours ?? 0 }
+
+    private var failureMessage: String? {
+        switch outcome {
+        case .waiting: nil
+        case .wrongCode: String(localized: "This code does not unlock this exhibition.")
+        case .cameraUnavailable(let message): message
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -50,12 +59,12 @@ struct TicketPromptView: View {
                     Button("Close") { dismiss() }
                 }
             }
-            .sheet(isPresented: $isScanning) {
+            .sheet(isPresented: $isScanning, onDismiss: submitScannedPayload) {
                 TicketScannerView(
                     simulatedPayload: exhibition.unlockCode,
                     onScan: { payload in
+                        scannedPayload = payload
                         isScanning = false
-                        submit(payload)
                     },
                     onUnavailable: { message in
                         isScanning = false
@@ -66,12 +75,13 @@ struct TicketPromptView: View {
         }
     }
 
-    private var failureMessage: String? {
-        switch outcome {
-        case .waiting: nil
-        case .wrongCode: String(localized: "This code does not unlock this exhibition.")
-        case .cameraUnavailable(let message): message
-        }
+    // Dismissing this sheet in the same update as the scanner it presents
+    // swallows the dismissal: the unlock is persisted, and the prompt stays on
+    // screen as if the scan had failed. The scan is replayed once it is gone.
+    private func submitScannedPayload() {
+        guard let payload = scannedPayload else { return }
+        scannedPayload = nil
+        submit(payload)
     }
 
     private func submit(_ payload: String) {
