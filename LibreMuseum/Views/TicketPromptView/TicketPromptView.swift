@@ -35,6 +35,7 @@ struct TicketPromptView: View {
                     TicketPromptHeaderView(title: exhibition.title)
 
                     Button("Scan the QR code", systemImage: "qrcode.viewfinder") {
+                        outcome = .waiting
                         isScanning = true
                     }
                     .buttonStyle(.borderedProminent)
