@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class TicketStore {
     private static let storageKey = "tickets.unlockedUntil"
+    private static let fallbackValidityHours = 24
 
     private let defaults: UserDefaults
     private var unlockedUntil: [String: Date]
@@ -22,13 +23,14 @@ final class TicketStore {
 
     func unlockedUntil(exhibitionID: String) -> Date? {
         guard let deadline = unlockedUntil[exhibitionID], deadline > .now else { return nil }
-        return deadline == .distantFuture ? nil : deadline
+        return deadline
     }
 
+    // A museum that never published `ticket_validity_hours`, or whose record has
+    // not synced yet, hands over a zero: one scan would then unlock for good.
     func unlock(exhibitionID: String, forHours hours: Int) {
-        unlockedUntil[exhibitionID] = hours > 0
-            ? Date.now.addingTimeInterval(TimeInterval(hours) * 3600)
-            : .distantFuture
+        let validityHours = hours > 0 ? hours : Self.fallbackValidityHours
+        unlockedUntil[exhibitionID] = Date.now.addingTimeInterval(TimeInterval(validityHours) * 3600)
         persist()
         scheduleNextExpiry()
     }
@@ -50,7 +52,7 @@ final class TicketStore {
         expiryTask?.cancel()
         expiryTask = nil
 
-        guard let next = unlockedUntil.values.filter({ $0 != .distantFuture }).min() else { return }
+        guard let next = unlockedUntil.values.min() else { return }
         let delay = next.timeIntervalSinceNow
         guard delay > 0 else { return dropExpired() }
 

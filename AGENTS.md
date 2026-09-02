@@ -153,7 +153,10 @@ in Search and on the Map, and it is why `ArtworkLinkView` — not each call site
 **Scanned tickets live in `UserDefaults`, not in SwiftData.** `purgeAll` empties the content cache
 from the settings screen; a visitor who has paid must not lose their unlock by freeing some space.
 `TicketStore` also wakes up once at the earliest deadline, because nothing else would notice a
-ticket expiring while its screen is open.
+ticket expiring while its screen is open. A non-positive validity falls back to 24 hours rather
+than to `.distantFuture`: `ticket_validity_hours` is decoded with `intOrZero`, so a museum that
+never published it — or whose record has not synced yet — would otherwise turn every paid ticket
+into a lifetime one.
 
 **The padlock discourages, it does not protect.** The artworks stay readable through the public
 REST API, as they must be for an app with no visitor account. `unlock_code` is compared on the
