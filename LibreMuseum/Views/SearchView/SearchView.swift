@@ -45,10 +45,13 @@ struct SearchView: View {
 
         let ranked = artworks.enumerated().compactMap { position, entity -> RankedArtwork? in
             let item = EntityToUI.artwork(entity, in: context, access: access)
+            // A locked artwork keeps its real title so that unlocking reveals
+            // it without a refetch. Matching on it would confirm the very title
+            // the teaser withholds: only the number on the label can find it.
             let fields = ArtworkSearch.Fields(
                 code: item.code,
-                titles: item.searchableTitles,
-                artist: item.artist
+                titles: item.isLocked ? [] : item.searchableTitles,
+                artist: item.isLocked ? "" : item.artist
             )
             guard let relevance = ArtworkSearch.relevance(of: fields, for: query) else {
                 return nil

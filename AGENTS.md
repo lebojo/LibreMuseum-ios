@@ -165,6 +165,12 @@ REST API, as they must be for an app with no visitor account. `unlock_code` is c
 device, so it travels in the `exhibition` response: do not present the lock as a protection, and
 do not put anything behind it that would actually harm the museum if read.
 
+**A locked artwork shows its teaser and nothing else.** `ArtworkUI` keeps the real title so that
+unlocking reveals it without a refetch, which makes every display path a leak waiting to happen:
+Search matches a locked artwork on its code alone, never on its title or its artist, and the map
+pin announces "Locked artwork" to VoiceOver instead of `pin.title`. Route a new display through
+`LockedTitle.teaser`, never through the raw title.
+
 **Do not use `AsyncImage`**: it would bypass `MediaStore`, hence the SwiftData cache — a new
 download on every appearance, and nothing at all offline. Always `RemoteImageView`. Audio obeys
 the same rule: `AudioGuidePlayer` is fed `Data` by `MediaStore`, never a remote `URL`.
