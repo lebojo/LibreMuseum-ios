@@ -54,11 +54,13 @@ struct FloorPlanView: View {
                         y: pin.relativeY * fittedSize.height - MapPinView.diameter / 2
                     )
                     .accessibilityLabel(
-                        Text(
-                            verbatim: [pin.title, pin.exhibitionTitle]
-                                .filter { !$0.isEmpty }
-                                .joined(separator: ", ")
-                        )
+                        pin.isLocked
+                            ? Text("Locked artwork")
+                            : Text(
+                                verbatim: [pin.title, pin.exhibitionTitle]
+                                    .filter { !$0.isEmpty }
+                                    .joined(separator: ", ")
+                            )
                     )
                 }
             }
