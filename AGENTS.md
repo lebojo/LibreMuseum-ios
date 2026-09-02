@@ -148,7 +148,9 @@ the same slot.
 `TicketAccess` from its exhibitions and the `TicketStore`, then carries it into the `*UI` models;
 no subview ever reads the store. That is what keeps the padlock identical in the exhibition list,
 in Search and on the Map, and it is why `ArtworkLinkView` — not each call site — decides between a
-`NavigationLink` and the unlock sheet.
+`NavigationLink` and the unlock sheet. An exhibition that requires a ticket but carries an empty
+`unlock_code` is deliberately **not** locked: no scan and no typed code could ever match it, so
+locking it would strand the visitor on a screen with no way forward.
 
 **Scanned tickets live in `UserDefaults`, not in SwiftData.** `purgeAll` empties the content cache
 from the settings screen; a visitor who has paid must not lose their unlock by freeing some space.
