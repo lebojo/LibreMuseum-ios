@@ -8,14 +8,16 @@ struct MapPinView: View {
     let label: String
     let colorHex: String
 
+    private var effectiveHex: String {
+        Color(museumHex: colorHex) == nil ? theme.accentHex : colorHex
+    }
+
     private var fillColor: Color {
-        Color(museumHex: colorHex) ?? theme.accent
+        Color(museumHex: effectiveHex) ?? .museumAccentFallback
     }
 
     private var labelColor: Color {
-        Color.museumLegibleForeground(onHex: colorHex)
-            ?? Color.museumLegibleForeground(onHex: theme.accentHex)
-            ?? .white
+        Color.museumLegibleForeground(onHex: effectiveHex) ?? .white
     }
 
     var body: some View {
@@ -27,7 +29,7 @@ struct MapPinView: View {
             .foregroundStyle(labelColor)
             .frame(width: Self.diameter, height: Self.diameter)
             .background(fillColor, in: Circle())
-            .overlay(Circle().stroke(.white, lineWidth: 2))
+            .overlay(Circle().stroke(labelColor, lineWidth: 2))
             .shadow(radius: 2, y: 1)
     }
 }

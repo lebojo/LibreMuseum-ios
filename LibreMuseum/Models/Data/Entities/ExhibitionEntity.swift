@@ -20,7 +20,7 @@ final class ExhibitionEntity {
         id: String,
         slug: String = "",
         coverPath: String = "",
-        colorHex: String? = "",
+        colorHex: String? = nil,
         isPermanent: Bool = false,
         startDate: Date? = nil,
         endDate: Date? = nil,

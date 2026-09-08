@@ -49,7 +49,7 @@ enum EntityToUI {
         return ExhibitionUI(
             id: entity.id,
             title: displayTitle,
-            searchableTitles: [displayTitle] + entity.translations.map(\.title).sorted(),
+            searchableTitles: searchIndex(displayTitle, entity.translations.map(\.title)),
             subtitle: translation?.subtitle ?? "",
             coverPath: entity.coverPath,
             isPermanent: entity.isPermanent,
@@ -97,7 +97,7 @@ enum EntityToUI {
             id: entity.id,
             code: entity.code,
             title: displayTitle,
-            searchableTitles: [displayTitle] + entity.translations.map(\.title).sorted(),
+            searchableTitles: searchIndex(displayTitle, entity.translations.map(\.title)),
             artist: entity.artist,
             year: entity.year,
             thumbnailPath: entity.imagePaths.first ?? "",
@@ -198,6 +198,11 @@ enum EntityToUI {
             title: translation?.title.nilIfEmpty ?? entity.slug,
             body: translation?.body ?? ""
         )
+    }
+
+    private static func searchIndex(_ displayTitle: String, _ translated: [String]) -> [String] {
+        var seen: Set<String> = []
+        return ([displayTitle] + translated).filter { !$0.isEmpty && seen.insert($0).inserted }
     }
 
     private static func title(of entity: ArtworkEntity, translated: String?) -> String {
