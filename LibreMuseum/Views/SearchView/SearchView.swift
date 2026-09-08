@@ -21,6 +21,7 @@ struct SearchView: View {
     private var artworks: [ArtworkEntity]
     @State private var query = ""
     @State private var isLoadingIndex = false
+    @State private var hasFocusedSearch = false
     @FocusState private var isSearchFocused: Bool
 
     private var languageContext: LanguageContext {
@@ -61,10 +62,6 @@ struct SearchView: View {
             .filter { ArtworkSearch.matches($0.searchableTitles, query: query) }
     }
 
-    private var hasResults: Bool {
-        !artworkResults.isEmpty || !exhibitionResults.isEmpty
-    }
-
     private var placeholderState: ContentStateView.State {
         if isLoadingIndex { return .loading("Preparing the search") }
         if query.isEmpty {
@@ -80,12 +77,21 @@ struct SearchView: View {
     }
 
     var body: some View {
+        let matchedArtworks = artworkResults
+        let matchedExhibitions = exhibitionResults
+
         NavigationStack {
             List {
-                if hasResults {
-                    if !artworkResults.isEmpty {
+                if matchedArtworks.isEmpty, matchedExhibitions.isEmpty {
+                    Section {
+                        ContentStateView(state: placeholderState) {
+                            Task { await sync.loadEveryArtworkIfNeeded() }
+                        }
+                    }
+                } else {
+                    if !matchedArtworks.isEmpty {
                         Section("Artworks") {
-                            ForEach(artworkResults) { artwork in
+                            ForEach(matchedArtworks) { artwork in
                                 NavigationLink(value: artwork) {
                                     ArtworkRowView(artwork: artwork)
                                 }
@@ -93,19 +99,13 @@ struct SearchView: View {
                         }
                     }
 
-                    if !exhibitionResults.isEmpty {
+                    if !matchedExhibitions.isEmpty {
                         Section("Exhibitions") {
-                            ForEach(exhibitionResults) { exhibition in
+                            ForEach(matchedExhibitions) { exhibition in
                                 NavigationLink(value: exhibition) {
                                     ExhibitionRowView(exhibition: exhibition)
                                 }
                             }
-                        }
-                    }
-                } else {
-                    Section {
-                        ContentStateView(state: placeholderState) {
-                            Task { await sync.loadEveryArtworkIfNeeded() }
                         }
                     }
                 }
@@ -119,7 +119,10 @@ struct SearchView: View {
             .searchable(text: $query, prompt: "Title, artist or label number")
             .searchFocused($isSearchFocused)
             .task {
-                isSearchFocused = true
+                if !hasFocusedSearch {
+                    hasFocusedSearch = true
+                    isSearchFocused = true
+                }
                 isLoadingIndex = true
                 await sync.loadEveryArtworkIfNeeded()
                 isLoadingIndex = false

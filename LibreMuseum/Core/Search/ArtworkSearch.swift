@@ -38,7 +38,9 @@ nonisolated enum ArtworkSearch {
     }
 
     static func matches(_ haystacks: [String], query: String) -> Bool {
-        haystacks.contains { matches($0, query: query) }
+        let needle = comparable(query)
+        guard !needle.isEmpty else { return false }
+        return haystacks.contains { comparable($0).contains(needle) }
     }
 
     private static func comparable(_ value: String) -> String {

@@ -51,7 +51,10 @@ struct MapView: View {
 
     private var pins: [MapPinUI] {
         let roomIDs = Set(roomsOnSelectedFloor.map(\.id))
-        let exhibitionsByID = Dictionary(uniqueKeysWithValues: exhibitions.map { ($0.id, $0) })
+        let exhibitionsByID = Dictionary(
+            exhibitions.map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
         return artworks
             .filter { roomIDs.contains($0.roomID) }
             .compactMap {
@@ -121,11 +124,13 @@ struct MapView: View {
             .navigationDestination(for: ArtworkUI.self) { ArtworkDetailView(artworkID: $0.id) }
             .refreshable {
                 await sync.loadMapIfNeeded()
+                await sync.loadExhibitionsIfNeeded()
                 await sync.loadEveryArtworkIfNeeded()
             }
             .task {
                 isLoadingMap = true
                 await sync.loadMapIfNeeded()
+                await sync.loadExhibitionsIfNeeded()
                 await sync.loadEveryArtworkIfNeeded()
                 isLoadingMap = false
             }
