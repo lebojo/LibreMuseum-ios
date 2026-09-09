@@ -42,6 +42,15 @@ enum EntityToUI {
         LanguageUI(id: entity.id, code: entity.code, label: entity.label)
     }
 
+    static func floor(_ entity: FloorEntity) -> FloorUI {
+        FloorUI(
+            id: entity.id,
+            name: entity.name.nilIfEmpty ?? String(localized: "Floor \(entity.level)"),
+            level: entity.level,
+            mapPath: entity.mapPath
+        )
+    }
+
     static func page(
         _ entity: PageEntity,
         languageCode: String,

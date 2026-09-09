@@ -121,7 +121,38 @@
         }
       }
     },
+    "Floor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étage"
+          }
+        }
+      }
+    },
+    "Floor %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étage %lld"
+          }
+        }
+      }
+    },
+    "Floor plan unavailable": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan d’étage indisponible"
+          }
+        }
+      }
+    },
     "Floor plans and artwork locations will appear here.": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -167,6 +198,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dernière vérification"
+          }
+        }
+      }
+    },
+    "Loading the map": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chargement du plan"
           }
         }
       }
@@ -227,6 +268,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucune exposition"
+          }
+        }
+      }
+    },
+    "No floor plans": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun plan d’étage"
           }
         }
       }
@@ -311,12 +362,32 @@
         }
       }
     },
+    "The floor plan could not be loaded.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le plan d’étage n’a pas pu être chargé."
+          }
+        }
+      }
+    },
     "The museum has not published any exhibition yet.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le musée n'a pas encore publié d'exposition."
+          }
+        }
+      }
+    },
+    "The museum has not published any floor plan yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le musée n’a pas encore publié de plan d’étage."
           }
         }
       }
@@ -347,6 +418,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le serveur a répondu %lld."
+          }
+        }
+      }
+    },
+    "This floor does not have a plan yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cet étage n’a pas encore de plan."
           }
         }
       }

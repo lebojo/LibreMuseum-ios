@@ -12,10 +12,7 @@ struct ContentView: View {
             }
 
             Tab("Map", systemImage: "map") {
-                ComingSoonView(
-                    title: "Map",
-                    detail: "Floor plans and artwork locations will appear here."
-                )
+                MuseumMapView()
             }
 
             Tab(role: .search) {
