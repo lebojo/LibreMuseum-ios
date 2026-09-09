@@ -8,11 +8,16 @@ struct FloorPickerView: View {
     var body: some View {
         Picker("Floor", selection: $selectedFloorID) {
             ForEach(floors) { floor in
-                Text(floor.name).tag(floor.id)
+                Text(floor.name)
+                    .lineLimit(1)
+                    .tag(floor.id)
             }
         }
         .pickerStyle(.segmented)
-        .padding(.horizontal)
-        .padding(.vertical, 4)
+        .frame(maxWidth: 520)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity)
+        .background(.regularMaterial)
     }
 }

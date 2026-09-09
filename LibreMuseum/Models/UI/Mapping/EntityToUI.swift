@@ -163,7 +163,12 @@ enum EntityToUI {
     }
 
     static func floor(_ entity: FloorEntity) -> FloorUI {
-        FloorUI(id: entity.id, name: entity.name, level: entity.level, mapPath: entity.mapPath)
+        FloorUI(
+            id: entity.id,
+            name: entity.name.nilIfEmpty ?? String(localized: "Floor \(entity.level)"),
+            level: entity.level,
+            mapPath: entity.mapPath
+        )
     }
 
     static func room(_ entity: RoomEntity) -> RoomUI {
