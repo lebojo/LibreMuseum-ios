@@ -6,6 +6,19 @@ struct MapPinView: View {
     @Environment(MuseumTheme.self) private var theme
 
     let label: String
+    let colorHex: String
+
+    private var effectiveHex: String {
+        Color(museumHex: colorHex) == nil ? theme.accentHex : colorHex
+    }
+
+    private var fillColor: Color {
+        Color(museumHex: effectiveHex) ?? .museumAccentFallback
+    }
+
+    private var labelColor: Color {
+        Color.museumLegibleForeground(onHex: effectiveHex) ?? .white
+    }
 
     var body: some View {
         Text(label)
@@ -13,10 +26,10 @@ struct MapPinView: View {
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             .padding(2)
-            .foregroundStyle(.white)
+            .foregroundStyle(labelColor)
             .frame(width: Self.diameter, height: Self.diameter)
-            .background(theme.accent, in: Circle())
-            .overlay(Circle().stroke(.white, lineWidth: 2))
+            .background(fillColor, in: Circle())
+            .overlay(Circle().stroke(labelColor, lineWidth: 2))
             .shadow(radius: 2, y: 1)
     }
 }

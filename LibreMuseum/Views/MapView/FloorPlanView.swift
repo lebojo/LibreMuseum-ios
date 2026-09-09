@@ -25,14 +25,20 @@ struct FloorPlanView: View {
                     Button {
                         onSelect(pin)
                     } label: {
-                        MapPinView(label: pin.label)
+                        MapPinView(label: pin.label, colorHex: pin.colorHex)
                     }
                     .buttonStyle(.plain)
                     .offset(
                         x: pin.relativeX * renderedSize.width - MapPinView.diameter / 2,
                         y: pin.relativeY * renderedSize.height - MapPinView.diameter / 2
                     )
-                    .accessibilityLabel(pin.title)
+                    .accessibilityLabel(
+                        Text(
+                            verbatim: [pin.title, pin.exhibitionTitle]
+                                .filter { !$0.isEmpty }
+                                .joined(separator: ", ")
+                        )
+                    )
                 }
             }
         }
