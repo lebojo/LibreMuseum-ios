@@ -75,7 +75,7 @@ actor MediaStore {
 
         let floors = (try? modelContext.fetch(FetchDescriptor<FloorEntity>())) ?? []
         for floor in floors {
-            requests.append(MediaRequest(path: floor.mapPath, thumb: .width1600))
+            requests.append(MediaRequest(path: floor.mapPath, thumb: nil))
         }
 
         let exhibitions = (try? modelContext.fetch(FetchDescriptor<ExhibitionEntity>())) ?? []

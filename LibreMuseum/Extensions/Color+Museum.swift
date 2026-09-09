@@ -1,6 +1,8 @@
 import SwiftUI
 
 extension Color {
+    static let museumMapBackground = Color(uiColor: .systemBackground)
+
     init?(museumHex hex: String) {
         var value = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         if value.hasPrefix("#") { value.removeFirst() }
