@@ -1,0 +1,10 @@
+// Template. Copy this file to Signing.local.xcconfig — which git ignores.
+//
+// The team identifier is in Xcode (Settings → Accounts → your account → Manage Certificates),
+// or in the developer portal under Membership.
+
+DEVELOPMENT_TEAM = YOURTEAMID
+
+// A bundle identifier is unique across the App Store: with a free developer account, the
+// project's own is already taken. Use yours.
+PRODUCT_BUNDLE_IDENTIFIER = com.example.LibreMuseum

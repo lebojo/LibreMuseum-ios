@@ -6,8 +6,14 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		17C0FFEE3024C02100F0AD12 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 17C0FFEE3024C02100F0AD11 /* CodeScanner */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		174A77D43024C02100F0AD68 /* LibreMuseum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LibreMuseum.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		17C0FFEE3024C02100F0AD02 /* Signing.local.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.local.example.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -22,6 +28,7 @@
 		174A77D13024C02100F0AD68 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				17C0FFEE3024C02100F0AD12 /* CodeScanner in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -30,6 +37,7 @@
 		174A77CB3024C02100F0AD68 = {
 			isa = PBXGroup;
 			children = (
+				17C0FFEE3024C02100F0AD03 /* Configurations */,
 				174A77D63024C02100F0AD68 /* LibreMuseum */,
 				174A77D53024C02100F0AD68 /* Products */,
 			);
@@ -41,6 +49,15 @@
 				174A77D43024C02100F0AD68 /* LibreMuseum.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		17C0FFEE3024C02100F0AD03 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */,
+				17C0FFEE3024C02100F0AD02 /* Signing.local.example.xcconfig */,
+			);
+			path = Configurations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -60,6 +77,9 @@
 				174A77D63024C02100F0AD68 /* LibreMuseum */,
 			);
 			name = LibreMuseum;
+			packageProductDependencies = (
+				17C0FFEE3024C02100F0AD11 /* CodeScanner */,
+			);
 			productName = LibreMuseum;
 			productReference = 174A77D43024C02100F0AD68 /* LibreMuseum.app */;
 			productType = "com.apple.product-type.application";
@@ -84,10 +104,14 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				fr,
 				Base,
 			);
 			mainGroup = 174A77CB3024C02100F0AD68;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				17C0FFEE3024C02100F0AD10 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 174A77D53024C02100F0AD68 /* Products */;
 			projectDirPath = "";
@@ -150,7 +174,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -168,13 +191,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -214,7 +238,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -226,26 +249,27 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		174A77E23024C02300F0AD68 /* Debug configuration for PBXNativeTarget "LibreMuseum" */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scanning the QR code on your ticket unlocks the exhibition you bought.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -257,7 +281,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.bojeux.LibreMuseum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -271,14 +294,14 @@
 		};
 		174A77E33024C02300F0AD68 /* Release configuration for PBXNativeTarget "LibreMuseum" */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17C0FFEE3024C02100F0AD01 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TS45UKZHX5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scanning the QR code on your ticket unlocks the exhibition you bought.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -290,7 +313,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.bojeux.LibreMuseum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -303,6 +325,25 @@
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		17C0FFEE3024C02100F0AD10 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		17C0FFEE3024C02100F0AD11 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17C0FFEE3024C02100F0AD10 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCConfigurationList section */
 		174A77CF3024C02100F0AD68 /* Build configuration list for PBXProject "LibreMuseum" */ = {

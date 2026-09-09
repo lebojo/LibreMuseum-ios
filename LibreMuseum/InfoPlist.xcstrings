@@ -1,0 +1,23 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSCameraUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanning the QR code on your ticket unlocks the exhibition you bought."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanner le QR code de votre billet débloque l’exposition que vous avez achetée."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
