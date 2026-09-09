@@ -13,6 +13,8 @@ struct MapView: View {
     private var floors: [FloorEntity]
     @Query(sort: [SortDescriptor(\RoomEntity.sort), SortDescriptor(\RoomEntity.name)])
     private var rooms: [RoomEntity]
+    @Query(sort: [SortDescriptor(\ExhibitionEntity.sort), SortDescriptor(\ExhibitionEntity.slug)])
+    private var exhibitions: [ExhibitionEntity]
     @Query(sort: [SortDescriptor(\ArtworkEntity.sort), SortDescriptor(\ArtworkEntity.code)])
     private var artworks: [ArtworkEntity]
     @State private var selectedFloorID = ""
@@ -49,9 +51,19 @@ struct MapView: View {
 
     private var pins: [MapPinUI] {
         let roomIDs = Set(roomsOnSelectedFloor.map(\.id))
+        let exhibitionsByID = Dictionary(
+            exhibitions.map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
         return artworks
             .filter { roomIDs.contains($0.roomID) }
-            .compactMap { EntityToUI.mapPin($0, in: languageContext) }
+            .compactMap {
+                EntityToUI.mapPin(
+                    $0,
+                    exhibition: exhibitionsByID[$0.exhibitionID],
+                    in: languageContext
+                )
+            }
     }
 
     private var roomSections: [RoomArtworksUI] {
@@ -112,11 +124,13 @@ struct MapView: View {
             .navigationDestination(for: ArtworkUI.self) { ArtworkDetailView(artworkID: $0.id) }
             .refreshable {
                 await sync.loadMapIfNeeded()
+                await sync.loadExhibitionsIfNeeded()
                 await sync.loadEveryArtworkIfNeeded()
             }
             .task {
                 isLoadingMap = true
                 await sync.loadMapIfNeeded()
+                await sync.loadExhibitionsIfNeeded()
                 await sync.loadEveryArtworkIfNeeded()
                 isLoadingMap = false
             }

@@ -3,6 +3,7 @@ import Foundation
 nonisolated struct ExhibitionUI: Identifiable, Sendable, Hashable {
     let id: String
     let title: String
+    let searchableTitles: [String]
     let subtitle: String
     let coverPath: String
     let isPermanent: Bool

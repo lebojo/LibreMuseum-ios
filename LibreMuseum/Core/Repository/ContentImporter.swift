@@ -110,6 +110,7 @@ actor ContentImporter {
             }
             entity.slug = dto.slug
             entity.coverPath = dto.coverPath ?? ""
+            entity.colorHex = dto.colorHex
             entity.isPermanent = dto.isPermanent
             entity.startDate = dto.startDate
             entity.endDate = dto.endDate

@@ -30,4 +30,11 @@ extension Color {
         guard let components = MuseumHex.components(hex) else { return nil }
         self.init(red: components.red, green: components.green, blue: components.blue)
     }
+
+    static func museumLegibleForeground(onHex hex: String) -> Color? {
+        guard let luminance = MuseumHex.relativeLuminance(hex) else { return nil }
+        let blackContrast = (luminance + 0.05) / 0.05
+        let whiteContrast = 1.05 / (luminance + 0.05)
+        return blackContrast >= whiteContrast ? .black : .white
+    }
 }

@@ -6,6 +6,7 @@ final class ExhibitionEntity {
     @Attribute(.unique) var id: String
     var slug: String
     var coverPath: String
+    var colorHex: String?
     var isPermanent: Bool
     var startDate: Date?
     var endDate: Date?
@@ -19,6 +20,7 @@ final class ExhibitionEntity {
         id: String,
         slug: String = "",
         coverPath: String = "",
+        colorHex: String? = nil,
         isPermanent: Bool = false,
         startDate: Date? = nil,
         endDate: Date? = nil,
@@ -29,6 +31,7 @@ final class ExhibitionEntity {
         self.id = id
         self.slug = slug
         self.coverPath = coverPath
+        self.colorHex = colorHex
         self.isPermanent = isPermanent
         self.startDate = startDate
         self.endDate = endDate

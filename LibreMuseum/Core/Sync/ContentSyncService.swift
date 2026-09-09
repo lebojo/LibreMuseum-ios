@@ -74,7 +74,7 @@ final class ContentSyncService {
 
     func loadExhibitionsIfNeeded() async {
         let stale = repository.needsRefresh(ExhibitionEntity.self, version: contentVersion) {
-            $0.fetchedVersion != contentVersion
+            $0.fetchedVersion != contentVersion || $0.colorHex == nil
         }
         guard stale else { return }
         await runIgnoringNetworkFailure { try await self.repository.loadExhibitions(version: self.contentVersion) }

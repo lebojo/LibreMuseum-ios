@@ -4,6 +4,7 @@ nonisolated struct ArtworkUI: Identifiable, Sendable, Hashable {
     let id: String
     let code: String
     let title: String
+    let searchableTitles: [String]
     let artist: String
     let year: String
     let thumbnailPath: String
