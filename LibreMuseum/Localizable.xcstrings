@@ -195,6 +195,16 @@
         }
       }
     },
+    "Floor %lld" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étage %lld"
+          }
+        }
+      }
+    },
     "From %@" : {
       "localizations" : {
         "fr" : {
@@ -671,6 +681,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cette exposition ne présente encore aucune œuvre."
+          }
+        }
+      }
+    },
+    "This floor does not have a plan yet." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet étage n’a pas encore de plan."
           }
         }
       }

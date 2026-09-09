@@ -26,6 +26,8 @@ nonisolated enum MuseumHex {
 }
 
 extension Color {
+    static let museumMapBackground = Color(uiColor: .systemBackground)
+
     init?(museumHex hex: String) {
         guard let components = MuseumHex.components(hex) else { return nil }
         self.init(red: components.red, green: components.green, blue: components.blue)
