@@ -4,6 +4,7 @@ import SwiftUI
 struct MapView: View {
     @Environment(ContentSyncService.self) private var sync
     @Environment(TicketStore.self) private var tickets
+
     @Query private var museums: [MuseumEntity]
     @Query(
         filter: #Predicate<LanguageEntity> { $0.isActive },
@@ -18,6 +19,7 @@ struct MapView: View {
     private var exhibitions: [ExhibitionEntity]
     @Query(sort: [SortDescriptor(\ArtworkEntity.sort), SortDescriptor(\ArtworkEntity.code)])
     private var artworks: [ArtworkEntity]
+
     @State private var selectedFloorID = ""
     @State private var selectedPin: MapPinUI?
     @State private var isLoadingMap = false
@@ -75,38 +77,33 @@ struct MapView: View {
             }
     }
 
-    private var emptyState: ContentStateView.State {
-        if isLoadingMap { return .loading("Loading the floor plans") }
-        if case .failed(let message) = sync.state { return .unreachable(message) }
-        return .empty("No floor plan", "The museum has not published its floor plans yet.")
+    private var contentState: ContentStateView.State {
+        if floorItems.isEmpty {
+            if isLoadingMap { return .loading("Loading the floor plans") }
+            if case .failed(let message) = sync.state { return .unreachable(message) }
+            return .empty("No floor plan", "The museum has not published its floor plans yet.")
+        }
+        return .empty("No floor plan", "This floor does not have a plan yet.")
     }
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.museumMapBackground
+            Group {
+                if let selectedFloor, selectedFloor.hasMap {
+                    FloorPlanView(
+                        mapPath: selectedFloor.mapPath,
+                        pins: pins,
+                        onSelect: open
+                    )
                     .ignoresSafeArea()
-
-                if floorItems.isEmpty {
-                    ContentStateView(state: emptyState) {
+                } else {
+                    ContentStateView(state: contentState) {
                         Task { await sync.loadMapIfNeeded() }
-                    }
-                } else if let selectedFloor {
-                    if selectedFloor.hasMap {
-                        FloorPlanView(
-                            mapPath: selectedFloor.mapPath,
-                            pins: pins,
-                            onSelect: open
-                        )
-                        .ignoresSafeArea()
-                    } else {
-                        ContentStateView(
-                            state: .empty("No floor plan", "This floor does not have a plan yet."),
-                            onRetry: {}
-                        )
                     }
                 }
             }
+            .navigationTitle(museums.first?.name ?? String(localized: "Map"))
+            .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .top, spacing: 0) {
                 if !floorItems.isEmpty {
                     FloorPickerView(selectedFloorID: floorSelection, floors: floorItems)
