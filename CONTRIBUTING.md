@@ -17,16 +17,23 @@ versions cannot open. Minimum target: iOS 18.6, iPhone and iPad.
 The app is useless without a server. Start one locally:
 
 ```bash
-cd ../../backend && ./scripts/dev.sh --seed   # PocketBase on :8090, bilingual demo museum
+git clone https://github.com/lebojo/LibreMuseum-pocketbase
+cd LibreMuseum-pocketbase && ./scripts/dev.sh --seed   # :8090, bilingual demo museum
 ```
 
-`APIConfiguration.baseURL` points at `http://127.0.0.1:8090`, which works as is in the simulator.
-On a physical device, replace it with your machine's IP — but do not commit that change.
+`Configurations/Server.xcconfig` points the app at `http://127.0.0.1:8090`, which works as is in
+the simulator. A physical device does not reach your machine there: copy
+`Server.local.example.xcconfig` to `Server.local.xcconfig` and put your machine's IP in it. That
+file is ignored by git — nothing to remember to revert before committing, and never edit the
+address in Swift.
 
 ```bash
 xcodebuild -project LibreMuseum.xcodeproj -scheme LibreMuseum \
-  -destination 'platform=iOS Simulator,name=iPhone 17' build
+  -destination 'generic/platform=iOS Simulator' build
 ```
+
+Name one of your own simulators instead to run it; `xcrun simctl list devices available` lists
+them.
 
 In the simulator there is nothing to sign: the command above works untouched. To build on a
 device you need a development team — it lives in a non-versioned file, never in the Xcode
@@ -53,7 +60,7 @@ Models/Data/   DTO (mirror of the server JSON) + Entities (@Model SwiftData)
 Models/UI/     flat models suffixed `UI` + Mapping/
 Views/         one folder per view that has subviews; Components/ for the reusable ones
 Extensions/    Color and Font styles
-Configurations/ xcconfig files — signing lives here
+Configurations/ xcconfig files and the Info.plist they feed — signing and server live here
 ```
 
 Xcode groups are synchronised with the file system: a file added to the right folder is picked up
@@ -160,8 +167,8 @@ One commit = one coherent change. Split rather than lump together.
 Work on a branch, never directly on `main`. Before opening the PR:
 
 - `xcodebuild … build` passes with no error and no new warning;
-- no stray change is committed — `DEVELOPMENT_TEAM` back in `project.pbxproj`, `baseURL` pointed
-  at your machine, `xcuserdata/`;
+- no stray change is committed — `DEVELOPMENT_TEAM` back in `project.pbxproj`, a server address
+  hardcoded in Swift, `xcuserdata/`;
 - a visual change comes with a screenshot or a recording.
 
 Describe the **why** in the PR: the *what* is readable in the diff. If you change a behaviour
