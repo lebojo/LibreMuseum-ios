@@ -1,0 +1,13 @@
+// The content server the app talks to. Injected into Info.plist as ServerBaseURL, which
+// APIConfiguration reads at launch — the URL is never written in Swift.
+//
+// Scheme and host only, no trailing path: the client replaces the whole path on every request.
+//
+// In xcconfig, `//` opens a comment. `$()` is an empty variable that breaks the pair without
+// changing the value: the build reads http://127.0.0.1:8090.
+
+LIBREMUSEUM_SERVER_URL = http:/$()/127.0.0.1:8090
+
+// A local server on a physical device, or a staging one: copy Server.local.example.xcconfig to
+// Server.local.xcconfig. Placed last, it has the final say. Git ignores it.
+#include? "Server.local.xcconfig"

@@ -1,7 +1,15 @@
 import Foundation
 
 nonisolated enum APIConfiguration {
-    static let baseURL = URL(string: "http://127.0.0.1:8090")!
+    static let baseURL = serverURLFromInfoPlist()
+
+    private static func serverURLFromInfoPlist() -> URL {
+        guard let configured = Bundle.main.object(forInfoDictionaryKey: "ServerBaseURL") as? String,
+              let url = URL(string: configured)
+        else { preconditionFailure("ServerBaseURL is missing from Info.plist — see Configurations/Server.xcconfig") }
+
+        return url
+    }
 
     static func mediaPath(collection: String, recordID: String, filename: String) -> String? {
         guard !filename.isEmpty, !recordID.isEmpty, !collection.isEmpty else { return nil }

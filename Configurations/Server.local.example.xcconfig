@@ -1,0 +1,8 @@
+// Template. Copy this file to Server.local.xcconfig — which git ignores.
+//
+// The simulator reaches your machine through 127.0.0.1; a physical device does not. Use the IP
+// your Mac holds on the network the phone is on (System Settings → Wi-Fi → Details).
+//
+// `//` opens a comment in xcconfig: keep the `$()` between the two slashes.
+
+LIBREMUSEUM_SERVER_URL = http:/$()/192.168.1.10:8090

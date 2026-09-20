@@ -1,0 +1,5 @@
+// The build settings that are not in the Xcode project. Each file included here carries its own
+// optional local override, so that a personal configuration never shows up in a diff.
+
+#include "Signing.xcconfig"
+#include "Server.xcconfig"
