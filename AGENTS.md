@@ -11,10 +11,10 @@ An **empty shell** SwiftUI app: it ships no text, no image, no colour. The museu
 its palette, its exhibitions and its audio guides all come from the PocketBase backend, so that
 the museum can update its content without going through the App Store again.
 
-The server lives in `../../backend` (a separate git repository, with its own `AGENTS.md`). Its
-real contract is in `backend/pb_migrations/` (schema, API rules) and
-`backend/pb_hooks/lib/content.js` (field semantics) — not in `backend/docs/`, which is a guide
-aimed at the museum's non-technical staff.
+The server is [LibreMuseum-pocketbase](https://github.com/lebojo/LibreMuseum-pocketbase), a
+separate git repository with its own `AGENTS.md`, cloned here at `../../backend`. Its real
+contract is in `pb_migrations/` (schema, API rules) and `pb_hooks/lib/content.js` (field
+semantics) — not in `docs/`, which is a guide aimed at the museum's non-technical staff.
 
 ## Code style
 
@@ -41,15 +41,17 @@ in the imperative, no body, no `Co-Authored-By`.
 export DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer   # xcode-select points at the CLT
 
 xcodebuild -project LibreMuseum.xcodeproj -scheme LibreMuseum \
-  -destination 'platform=iOS Simulator,name=iPhone 17' build
+  -destination 'generic/platform=iOS Simulator' build
 
-xcrun simctl install "iPhone 17" <path>/LibreMuseum.app
-xcrun simctl launch  "iPhone 17" ch.bojeux.LibreMuseum
+xcrun simctl install "<simulator>" <path>/LibreMuseum.app
+xcrun simctl launch  "<simulator>" ch.bojeux.LibreMuseum
 ```
 
-Any installed simulator works — run `xcrun simctl list devices available` to pick one.
+`generic/platform=iOS Simulator` builds without naming a device; to install and launch, pick one
+from `xcrun simctl list devices available` — the names change with every Xcode release, so do not
+hardcode one here.
 
-The backend on the other side:
+The backend on the other side, in its own clone:
 
 ```bash
 cd ../../backend && ./scripts/test.sh    # DISPOSABLE database on :8091 — use it for every test
@@ -67,7 +69,7 @@ Models/Data/   DTO (mirror of the server JSON) + Entities (@Model SwiftData)
 Models/UI/     flat models suffixed `UI` + Mapping/
 Views/         one folder per view that has subviews; Components/ for the reusable ones
 Extensions/    Color and Font styles
-Configurations/ xcconfig files — signing lives here, never in the Xcode project
+Configurations/ xcconfig files and the Info.plist they feed — never in the Xcode project
 ```
 
 **Primary views query SwiftData through `@Query`; subviews only ever receive `*UI` models.** A
@@ -247,6 +249,16 @@ falls back cleanly.
 non-versioned `Signing.local.xcconfig`. A build setting written into `project.pbxproj` overrides
 the xcconfig silently: never put them back there.
 
+**The server address is not in Swift either.** `Configurations/Server.xcconfig` defines
+`LIBREMUSEUM_SERVER_URL`, `Configurations/Info.plist` carries it into the bundle as
+`ServerBaseURL`, and `APIConfiguration.serverURLFromInfoPlist` reads it once. `Base.xcconfig`
+is what the target points at; it includes `Signing.xcconfig` and `Server.xcconfig`, each with
+its own optional `*.local.xcconfig`. Three traps: in an xcconfig `//` opens a comment, so the
+value is written `http:/$()/127.0.0.1:8090`; `INFOPLIST_KEY_<name>` only works for keys Xcode
+knows, which is why a custom key needs a real `INFOPLIST_FILE` — it merges with
+`GENERATE_INFOPLIST_FILE`, both coexist; and only the scheme and host are used, since every
+request replaces the whole path.
+
 ## Current state
 
 Foundation in place and verified: network layer, SwiftData cache, lazy loading, server-driven
@@ -262,6 +274,8 @@ This is still lazy: nothing is fetched until one of those two tabs is opened.
 
 Paying exhibitions are in place: `requires_ticket` locks the artwork list behind a QR code scanned with `CodeScanner`, `museum.ticket_validity_hours` says for how long, and the description of the exhibition stays readable without a ticket.
 
-Still to do: `SWIFT_VERSION` 5 → 6, externalising `APIConfiguration.baseURL` (a hardcoded
-constant), and a `LICENSE` plus a `README.md` before the repository goes public. The floor plan
-is fit to the screen with no zoom, which will not be enough for a large museum.
+Still to do: `SWIFT_VERSION` 5 → 6. The app target already compiles clean in Swift 6 mode —
+the only errors come from `CodeScanner`, whose `AVCapture` delegate conformances cross into
+main-actor-isolated code, and they only appear when the version is forced globally on the command
+line instead of on the target. The floor plan is fit to the screen with no zoom, which will not be
+enough for a large museum.

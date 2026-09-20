@@ -4,8 +4,9 @@ xcuserdata/
 *.xcscmblueprint
 *.xccheckout
 
-# Signing — everyone has their own
+# Signing and server — everyone has their own
 Configurations/Signing.local.xcconfig
+Configurations/Server.local.xcconfig
 
 # Agent worktrees
 .claude/
